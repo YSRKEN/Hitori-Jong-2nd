@@ -16,7 +16,9 @@
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "lint": "eslint 'src/**/*.{js,jsx,ts,tsx}'; stylelint 'src/**/*.css'",
+    "precommit": "lint-staged"
   },
   "eslintConfig": {
     "extends": "react-app"
@@ -58,5 +60,20 @@
     "stylelint-config-styled-components": "^0.1.1",
     "stylelint-order": "^3.1.1",
     "stylelint-processor-styled-components": "^1.8.0"
+  },
+  "lint-staged": {
+    "*.{js,jsx,ts,tsx}": [
+      "eslint --fix",
+      "git add"
+    ],
+    "*.css": [
+      "stylelint --fix",
+      "git add"
+    ]
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged"
+    }
   }
 }
