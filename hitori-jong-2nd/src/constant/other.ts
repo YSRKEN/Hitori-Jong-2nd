@@ -6,3 +6,5 @@ export const README_URL =
   'https://github.com/YSRKEN/Hitori-Jong-2nd/wiki/取扱説明書';
 
 export type ApplicationMode = 'Title' | 'Game' | 'Simulation';
+
+export const KANA_LIST = 'あいうえおかきくけこさしすせそたちつてとなにぬねのはひふへほまみむめもや　ゆ　よらりるれろわ　を　ん';
