@@ -1,7 +1,7 @@
 import React, { useContext } from 'react';
-import TitleScene from 'shine/TitleScene';
-import GameScene from 'shine/GameScene';
-import SimulationScene from 'shine/SimulationScene';
+import TitleScene from 'scene/Title';
+import GameScene from 'scene/Game';
+import SimulationScene from 'scene/Simulation';
 import useStore from './store';
 import './css/base.css';
 import { ApplicationContext } from 'context';
