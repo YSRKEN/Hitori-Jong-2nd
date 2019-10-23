@@ -2,6 +2,8 @@ import { useState, useEffect } from "react";
 import { ApplicationMode } from "./constant/other";
 import { Action } from "./constant/action";
 import { ApplicationState } from "./context";
+import { IDOL_LIST2 } from "./constant2/idol";
+import { UNIT_LIST2 } from "./constant2/unit";
 
 const useStore = (): ApplicationState => {
 	const [applicationMode, setApplicationMode] = useState<ApplicationMode>('Title');
@@ -20,6 +22,9 @@ const useStore = (): ApplicationState => {
 
 	// dispatch
 	const dispatch = (action: Action) => {
+		console.log(IDOL_LIST2);
+		console.log(UNIT_LIST2);
+
 		switch (action.type) {
 			case 'TitleToGame':
 				setApplicationMode2('Game');

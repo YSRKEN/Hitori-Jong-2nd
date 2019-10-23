@@ -6,14 +6,23 @@ export interface UnitInfo2 {
 	id: number;
 	name: string;
 	member: number[];
-	count: number;
 	chiFlg: boolean;
+	count: number;
+	score: number;
 }
+
+// 得点計算
+const calcScore = (length: number) => {
+	if (length <= 1) {
+		return 1000;
+	}
+	return (length - 1) * 2000;
+};
 
 // UnitInfo2型の一覧を生成する
 const createUnitInfo2 = () => {
 	// アイドル名→アイドルIDの変換表
-	const nameToId: {[key: string]: number} = {};
+	const nameToId: { [key: string]: number } = {};
 	IDOL_LIST.map((idolInfo, id) => {
 		nameToId[idolInfo.name] = id;
 	});
@@ -24,14 +33,13 @@ const createUnitInfo2 = () => {
 		const name = unitInfo.name;
 		const member = unitInfo.member.map(name => nameToId[name]);
 		const count = member.length;
-		output.push({id, name, 'member': [...member], count, chiFlg: false});
+		const score = calcScore(count);
+		output.push({ id, name, 'member': [...member], chiFlg: false, count, score });
 		if (member.length >= 3) {
-			output.push({id, 'name': `${name}(チー)`, 'member': [...member], count, chiFlg: true});
+			output.push({ id, 'name': `${name}(チー)`, 'member': [...member], chiFlg: true, count, 'score': calcScore(count - 1) });
 		}
 	});
 	return output;
 };
 
 export const UNIT_LIST2 = createUnitInfo2();
-
-console.log(UNIT_LIST2);

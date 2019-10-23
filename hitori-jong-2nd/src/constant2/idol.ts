@@ -21,5 +21,3 @@ const createIdolInfo2 = () => {
 };
 
 export const IDOL_LIST2 = createIdolInfo2();
-
-console.log(IDOL_LIST2);
