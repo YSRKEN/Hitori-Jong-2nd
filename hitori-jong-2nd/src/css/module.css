@@ -10,6 +10,11 @@
   font-size: 10vh;
 }
 
+.button-back-title {
+  font-size: 5vh;
+  padding: 1vh 2vh 1vh 2vh;
+}
+
 .button-top {
   font-size: 7vh;
   padding: 2vh 3vh 2vh 3vh;
