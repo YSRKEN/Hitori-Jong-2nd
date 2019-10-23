@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import {
   APPLICATION_NAME,
   AUTHOR_URL,
@@ -6,9 +6,13 @@ import {
   README_URL,
   APPLICATION_VERSION,
 } from 'constant/other';
+import { ApplicationContext } from 'context';
 
 // タイトル画面
-const TitleScene: React.FC = () => (
+const TitleSceneBase: React.FC<{
+  titleToGame: () => void,
+  titleToSimulation: () => void
+}> = ({titleToGame, titleToSimulation}) => (
   <>
     <div className="l-header l-flex">
       <a className="l-margin-right link" href={AUTHOR_URL}>
@@ -30,12 +34,12 @@ const TitleScene: React.FC = () => (
       </div>
     </div>
     <div className="l-footer l-text-center">
-      <button type="button" className="l-margin-right button-top button-game">
+      <button type="button" className="l-margin-right button-top button-game" onClick={titleToGame}>
         ゲーム開始
       </button>
       <button
         type="button"
-        className="l-margin-right button-top button-simulation"
+        className="l-margin-right button-top button-simulation" onClick={titleToSimulation}
       >
         シミュレーション
       </button>
@@ -45,5 +49,12 @@ const TitleScene: React.FC = () => (
     </div>
   </>
 );
+
+const TitleScene: React.FC = () => {
+  const { dispatch } = useContext(ApplicationContext);
+  return <TitleSceneBase
+    titleToGame={() => dispatch({type: 'TitleToGame', message: ''})}
+    titleToSimulation={() => dispatch({type: 'TitleToSimulation', message: ''})} />;
+};
 
 export default TitleScene;
