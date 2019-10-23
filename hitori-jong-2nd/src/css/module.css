@@ -1,0 +1,30 @@
+.link {
+  font-size: 5vh;
+}
+
+.application-title {
+  display: block;
+  font-size: 20vh;
+}
+
+.application-version {
+  display: block;
+  font-size: 10vh;
+}
+
+.button-top {
+  font-size: 7vh;
+  padding: 2vh 3vh 2vh 3vh;
+}
+
+.button-game {
+  background-color: orange;
+}
+
+.button-simulation {
+  background-color: greenyellow;
+}
+
+.button-share {
+  background-color: #00aced;
+}
