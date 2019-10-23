@@ -11,10 +11,10 @@ import {
 const TitleScene: React.FC = () => (
   <>
     <div className="l-header l-flex">
-      <a className="l-mergin-right link" href={AUTHOR_URL}>
+      <a className="l-margin-right link" href={AUTHOR_URL}>
         作者Twitter
       </a>
-      <a className="l-mergin-right link" href={PROJECT_URL}>
+      <a className="l-margin-right link" href={PROJECT_URL}>
         GitHubリンク
       </a>
       <a className="link" href={README_URL}>
@@ -22,20 +22,24 @@ const TitleScene: React.FC = () => (
       </a>
     </div>
     <div className="l-main">
-      <span className="application-title">{APPLICATION_NAME}</span>
-      <span className="application-version">{APPLICATION_VERSION}</span>
+      <div className="l-text-center">
+        <span className="application-title">{APPLICATION_NAME}</span>
+      </div>
+      <div className="l-text-center">
+        <span className="application-version">{APPLICATION_VERSION}</span>
+      </div>
     </div>
-    <div className="l-footer l-flex">
-      <button type="button" className="l-mergin-right button-top button-game">
+    <div className="l-footer l-text-center">
+      <button type="button" className="l-margin-right button-top button-game">
         ゲーム開始
       </button>
       <button
         type="button"
-        className="l-mergin-right button-top button-simulation"
+        className="l-margin-right button-top button-simulation"
       >
         シミュレーション
       </button>
-      <button type="button" className="l-mergin-right button-top button-share">
+      <button type="button" className="button-top button-share">
         Twitterにシェア
       </button>
     </div>

@@ -4,8 +4,22 @@
   margin-top: 5vh;
 }
 
-.l-mergin-right {
+.l-main {
+  margin-top: 15vh;
+}
+
+.l-footer {
+  bottom: 5vh;
+  position: absolute;
+  width: 100vw;
+}
+
+.l-margin-right {
   margin-right: 5vh;
+}
+
+.l-text-center {
+  text-align: center;
 }
 
 .l-flex {

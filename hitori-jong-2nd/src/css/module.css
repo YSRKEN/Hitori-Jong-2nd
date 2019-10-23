@@ -3,12 +3,10 @@
 }
 
 .application-title {
-  display: block;
   font-size: 20vh;
 }
 
 .application-version {
-  display: block;
   font-size: 10vh;
 }
 
