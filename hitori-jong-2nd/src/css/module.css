@@ -85,12 +85,12 @@
 
 .idol-tile-normal {
   font-size: 6vh;
-  line-height: 10vh;
+  line-height: 7vh;
 }
 
 .idol-tile-small {
   font-size: 5vh;
-  line-height: 11vh;
+  line-height: 6vh;
 }
 
 .idol-tile-Princess {
@@ -125,4 +125,8 @@
 .unit-tile-chi {
   color: red;
   font-weight: bold;
+}
+
+.idol-tile-hidden {
+  display: none;
 }

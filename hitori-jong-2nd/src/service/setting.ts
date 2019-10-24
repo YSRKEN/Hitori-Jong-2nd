@@ -3,7 +3,7 @@ export const loadSetting = <T>(
   key: string,
   defaultValue: T,
   toIntFlg = true,
-) => {
+): T => {
   // キーから値を読み取り、null値ならデフォルト値を返す
   const value = window.localStorage.getItem(key);
   if (value === null) {
@@ -14,19 +14,18 @@ export const loadSetting = <T>(
   switch (typeof defaultValue) {
     case 'number':
       if (toIntFlg) {
-        return parseInt(value, 10);
+        return (parseInt(value, 10) as any) as T;
       }
 
-      return parseFloat(value);
-
+      return (parseFloat(value) as any) as T;
     case 'bigint':
-      return BigInt(value);
+      return (BigInt(value) as any) as T;
     case 'boolean':
-      return value.toLowerCase() === 'true';
+      return ((value.toLowerCase() === 'true') as any) as T;
     case 'object':
       return JSON.parse(value) as T;
     case 'string':
-      return value;
+      return (value as any) as T;
     default:
       throw Error('未対応の型です。');
   }

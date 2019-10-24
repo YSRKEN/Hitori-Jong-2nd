@@ -2,8 +2,8 @@ import React, { useContext } from 'react';
 import TitleScene from 'scene/Title';
 import GameScene from 'scene/Game';
 import SimulationScene from 'scene/Simulation';
-import useStore from './store';
-import './css/base.css';
+import useStore from 'store';
+import 'css/base.css';
 import { ApplicationContext } from 'context';
 
 const SceneSelector: React.FC = () => {
@@ -11,7 +11,7 @@ const SceneSelector: React.FC = () => {
 
   switch (applicationMode) {
     case 'Title':
-        return <TitleScene />;
+      return <TitleScene />;
     case 'Game':
       return <GameScene />;
     case 'Simulation':
@@ -24,9 +24,11 @@ const SceneSelector: React.FC = () => {
 const App: React.FC = () => {
   const state = useStore();
 
-  return (<ApplicationContext.Provider value={state}>
+  return (
+    <ApplicationContext.Provider value={state}>
       <SceneSelector />
-    </ApplicationContext.Provider>);
+    </ApplicationContext.Provider>
+  );
 };
 
 export default App;

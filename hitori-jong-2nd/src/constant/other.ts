@@ -16,7 +16,22 @@ export interface Hand {
   member: number[]; // ユニットを組んでないメンバー。ツモ牌は最後の牌とする
 }
 
-export const DEFAULT_HAND: Hand = {
+export const DEFAULT_HAND_S: Hand = {
   unit: [125, 54],
   member: [2, 3, 7, 10, 11, 12],
 };
+
+export const DEFAULT_HAND_G: Hand = {
+  unit: [125, 54],
+  member: [2, 3, 7, 10, 11, -1],
+};
+
+// 手牌の枚数
+export const HAND_TILE_COUNT = 12;
+export const HAND_TILE_COUNT_PLUS = 13;
+
+// 各タイル毎の枚数
+export const TILE_COUNT = 3;
+
+// 参加者の人数
+export const PRODUCER_COUNT = 4;

@@ -1,6 +1,6 @@
 import { createContext } from 'react';
-import { Action } from './constant/action';
-import { ApplicationMode, Hand } from './constant/other';
+import { Action } from 'constant/action';
+import { ApplicationMode, Hand } from 'constant/other';
 
 export interface ApplicationState {
   applicationMode: ApplicationMode;

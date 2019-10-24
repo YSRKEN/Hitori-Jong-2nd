@@ -1,15 +1,24 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { loadSetting, saveSetting } from 'service/setting';
-import { ApplicationMode, DEFAULT_HAND, Hand } from './constant/other';
-import { Action } from './constant/action';
-import { ApplicationState } from './context';
-import { IDOL_LIST2 } from './constant2/idol';
-import { UNIT_LIST2 } from './constant2/unit';
+import {
+  ApplicationMode,
+  DEFAULT_HAND_G,
+  DEFAULT_HAND_S,
+  Hand,
+  HAND_TILE_COUNT,
+  TILE_COUNT,
+  PRODUCER_COUNT,
+} from 'constant/other';
+import { Action } from 'constant/action';
+import { ApplicationState } from 'context';
+import { IDOL_LIST_COUNT } from 'constant/idol';
+import { shuffleDeck } from 'service/algorithm';
+import { createHandFromArray } from 'service/hand';
 
 const useStore = (): ApplicationState => {
   // アプリケーションの動作モード
   const [applicationMode, setApplicationMode] = useState<ApplicationMode>(
-    loadSetting<ApplicationMode>('ApplicationMode', 'Title') as ApplicationMode,
+    loadSetting<ApplicationMode>('ApplicationMode', 'Title'),
   );
   const setApplicationMode2 = (mode: ApplicationMode) => {
     setApplicationMode(mode);
@@ -17,21 +26,74 @@ const useStore = (): ApplicationState => {
   };
 
   // ゲーム画面における手牌
-  const [myHandG] = useState<Hand>(loadSetting<Hand>(
-    'MyHandG',
-    DEFAULT_HAND,
-  ) as Hand);
+  const [myHandG, setMyHandG] = useState<Hand>(
+    loadSetting<Hand>('MyHandG', DEFAULT_HAND_G),
+  );
+  const setMyHandG2 = (hand: Hand) => {
+    setMyHandG(hand);
+    saveSetting('MyHandG', hand);
+  };
 
   // シミュレーション画面における手牌
-  const [myHandS] = useState<Hand>(loadSetting<Hand>(
-    'MyHandS',
-    DEFAULT_HAND,
-  ) as Hand);
+  const [myHandS] = useState(loadSetting('MyHandS', DEFAULT_HAND_S));
+
+  // ゲーム画面における牌山
+  const [tileDeck, setTileDeck] = useState(
+    loadSetting('TileDeck', Array<number>()),
+  );
+  const setTileDeck2 = (deck: number[]) => {
+    setTileDeck(deck);
+    saveSetting('TileDeck', deck);
+  };
+
+  // 牌山用のポインター
+  const [, setDeckPointer] = useState(loadSetting('DeckPointer', 0));
+
+  // 対戦相手の手牌(ゲーム画面用)
+  const otherHand = loadSetting('OtherHand', Array<Hand>());
+  const saveOtherHand = () => {
+    saveSetting('OtherHand', otherHand);
+  };
+
+  // アプリケーション開始時、牌山が初期化されていない時は初期化する
+  useEffect(() => {
+    if (tileDeck.length === 0) {
+      // 牌山を作る
+      let tileDeckTemp = Array<number>();
+      for (let id = 0; id < IDOL_LIST_COUNT; id += 1) {
+        for (let count = 0; count < TILE_COUNT; count += 1) {
+          tileDeckTemp.push(id);
+        }
+      }
+
+      // 洗牌
+      tileDeckTemp = shuffleDeck(tileDeckTemp);
+      setTileDeck2(tileDeckTemp);
+
+      // 指定した範囲の牌をセットする
+      for (let pi = 0; pi < PRODUCER_COUNT; pi += 1) {
+        const handArray = tileDeckTemp.slice(
+          pi * HAND_TILE_COUNT,
+          (pi + 1) * HAND_TILE_COUNT,
+        );
+        if (pi === 0) {
+          setMyHandG2(createHandFromArray(handArray));
+        } else {
+          otherHand.push(createHandFromArray(handArray));
+        }
+      }
+      saveOtherHand();
+
+      // 牌を配る
+      setDeckPointer(HAND_TILE_COUNT * 4);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   // dispatch
   const dispatch = (action: Action) => {
-    console.log(IDOL_LIST2);
-    console.log(UNIT_LIST2);
+    console.log(myHandG);
+    console.log(otherHand);
 
     switch (action.type) {
       case 'TitleToGame':
