@@ -15,6 +15,13 @@
   padding: 1vh 2vh 1vh 2vh;
 }
 
+.reset-game {
+  background-color: red;
+  font-size: 5vh;
+  font-weight: bold;
+  padding: 1vh 2vh 1vh 2vh;
+}
+
 .default-button {
   border-radius: 2vh;
 }
@@ -90,7 +97,7 @@
 
 .idol-tile-small {
   font-size: 5vh;
-  line-height: 6vh;
+  line-height: 5vh;
 }
 
 .idol-tile-Princess {
