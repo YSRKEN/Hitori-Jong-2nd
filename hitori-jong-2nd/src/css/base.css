@@ -19,8 +19,8 @@ a:visited {
 
 button {
   border-color: black;
-  border-radius: 2vh;
   border-style: solid;
   border-width: 1px;
+  color: black;
   white-space: nowrap;
 }

@@ -10,9 +10,9 @@ import { ApplicationContext } from 'context';
 
 // タイトル画面
 const TitleSceneBase: React.FC<{
-  titleToGame: () => void,
-  titleToSimulation: () => void
-}> = ({titleToGame, titleToSimulation}) => (
+  titleToGame: () => void;
+  titleToSimulation: () => void;
+}> = ({ titleToGame, titleToSimulation }) => (
   <>
     <div className="l-header l-flex">
       <a className="l-margin-right link" href={AUTHOR_URL}>
@@ -34,16 +34,21 @@ const TitleSceneBase: React.FC<{
       </div>
     </div>
     <div className="l-footer l-text-center">
-      <button type="button" className="l-margin-right button-top button-game" onClick={titleToGame}>
+      <button
+        type="button"
+        className="l-margin-right button-radius button-top button-game"
+        onClick={titleToGame}
+      >
         ゲーム開始
       </button>
       <button
         type="button"
-        className="l-margin-right button-top button-simulation" onClick={titleToSimulation}
+        className="l-margin-right button-radius button-top button-simulation"
+        onClick={titleToSimulation}
       >
         シミュレーション
       </button>
-      <button type="button" className="button-top button-share">
+      <button type="button" className="button-radius button-top button-share">
         Twitterにシェア
       </button>
     </div>
@@ -52,9 +57,15 @@ const TitleSceneBase: React.FC<{
 
 const TitleScene: React.FC = () => {
   const { dispatch } = useContext(ApplicationContext);
-  return <TitleSceneBase
-    titleToGame={() => dispatch({type: 'TitleToGame', message: ''})}
-    titleToSimulation={() => dispatch({type: 'TitleToSimulation', message: ''})} />;
+
+  return (
+    <TitleSceneBase
+      titleToGame={() => dispatch({ type: 'TitleToGame', message: '' })}
+      titleToSimulation={() =>
+        dispatch({ type: 'TitleToSimulation', message: '' })
+      }
+    />
+  );
 };
 
 export default TitleScene;

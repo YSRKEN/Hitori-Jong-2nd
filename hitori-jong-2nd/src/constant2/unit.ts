@@ -41,7 +41,7 @@ const createUnitInfo2 = () => {
     if (member.length >= 3) {
       output.push({
         id,
-        name: `${name}(チー)`,
+        name,
         member: [...member],
         chiFlg: true,
         count,

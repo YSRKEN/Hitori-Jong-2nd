@@ -15,6 +15,10 @@
   padding: 1vh 2vh 1vh 2vh;
 }
 
+.button-radius {
+  border-radius: 2vh;
+}
+
 .button-top {
   font-size: 7vh;
   padding: 2vh 3vh 2vh 3vh;
@@ -30,4 +34,95 @@
 
 .button-share {
   background-color: #00aced;
+}
+
+.button-tile-unit {
+  font-size: 5vh;
+  height: 24vh;
+  white-space: normal;
+}
+
+.button-tile-width-1 {
+  width: 11vh;
+}
+
+.button-tile-width-2 {
+  width: calc(11vh * 2 + 1vh);
+}
+
+.button-tile-width-3 {
+  width: calc(11vh * 3 + 1vh * 2);
+}
+
+.button-tile-width-4 {
+  width: calc(11vh * 4 + 1vh * 3);
+}
+
+.button-tile-width-5 {
+  width: calc(11vh * 5 + 1vh * 4);
+}
+
+.button-tile-width-6 {
+  width: calc(11vh * 6 + 1vh * 5);
+}
+
+.button-tile-width-7 {
+  width: calc(11vh * 7 + 1vh * 6);
+}
+
+.button-tile-width-13 {
+  width: calc(11vh * 13 + 1vh * 12);
+}
+
+.button-tile-idol {
+  height: 24vh;
+  white-space: unset;
+  width: 11vh;
+  -webkit-writing-mode: vertical-rl;
+  -ms-writing-mode: tb-rl;
+  writing-mode: vertical-rl;
+}
+
+.button-tile-idol-normal {
+  font-size: 6vh;
+  line-height: 10vh;
+}
+
+.button-tile-idol-small {
+  font-size: 5vh;
+  line-height: 11vh;
+}
+
+.button-tile-idol-Princess {
+  background-color: pink;
+}
+
+.button-tile-idol-Fairy {
+  background-color: lightblue;
+}
+
+.button-tile-idol-Angel {
+  background-color: lemonchiffon;
+}
+
+.button-tile-idol-Extra {
+  background-color: lightgreen;
+}
+
+.button-tile-idol-Sora {
+  background-color: violet;
+}
+
+.tile-list {
+  border-spacing: 1vh;
+}
+
+.tile {
+  padding-left: 0;
+  padding-right: 0;
+}
+
+.button-tile-unit-chi {
+  color: red;
+  font-weight: bold;
 }
