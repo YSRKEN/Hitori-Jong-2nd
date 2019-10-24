@@ -1,0 +1,149 @@
+.link {
+  font-size: 5vh;
+}
+
+.application-title {
+  font-size: 20vh;
+}
+
+.application-version {
+  font-size: 10vh;
+}
+
+.back-title {
+  font-size: 5vh;
+  padding: 1vh 2vh 1vh 2vh;
+}
+
+.reset-game {
+  background-color: red;
+  font-size: 5vh;
+  font-weight: bold;
+  padding: 1vh 2vh 1vh 2vh;
+}
+
+.default-button {
+  border-radius: 2vh;
+}
+
+.top-menu {
+  font-size: 7vh;
+  padding: 2vh 3vh 2vh 3vh;
+}
+
+.top-menu-game {
+  background-color: orange;
+}
+
+.top-menu-simulation {
+  background-color: greenyellow;
+}
+
+.top-menu-share {
+  background-color: #00aced;
+}
+
+.unit-tile {
+  font-size: 5vh;
+  height: 24vh;
+  white-space: normal;
+}
+
+.unit-tile.is-selected {
+  font-weight: bold;
+  border-width: 2px !important;
+}
+
+.unit-tile-width-1 {
+  width: 11vh;
+}
+
+.unit-tile-width-2 {
+  width: calc(11vh * 2 + 1vh);
+}
+
+.unit-tile-width-3 {
+  width: calc(11vh * 3 + 1vh * 2);
+}
+
+.unit-tile-width-4 {
+  width: calc(11vh * 4 + 1vh * 3);
+}
+
+.unit-tile-width-5 {
+  width: calc(11vh * 5 + 1vh * 4);
+}
+
+.unit-tile-width-6 {
+  width: calc(11vh * 6 + 1vh * 5);
+}
+
+.unit-tile-width-7 {
+  width: calc(11vh * 7 + 1vh * 6);
+}
+
+.unit-tile-width-13 {
+  width: calc(11vh * 13 + 1vh * 12);
+}
+
+.idol-tile {
+  height: 24vh;
+  white-space: unset;
+  width: 11vh;
+  -webkit-writing-mode: vertical-rl;
+  -ms-writing-mode: tb-rl;
+  writing-mode: vertical-rl;
+}
+
+.idol-tile.is-selected {
+  font-weight: bold;
+  border-width: 2px !important;
+}
+
+.idol-tile-normal {
+  font-size: 6vh;
+  line-height: 7vh;
+}
+
+.idol-tile-small {
+  font-size: 5vh;
+  line-height: 5vh;
+}
+
+.idol-tile-Princess {
+  background-color: pink;
+}
+
+.idol-tile-Fairy {
+  background-color: lightblue;
+}
+
+.idol-tile-Angel {
+  background-color: lemonchiffon;
+}
+
+.idol-tile-Extra {
+  background-color: lightgreen;
+}
+
+.idol-tile-Sora {
+  background-color: violet;
+}
+
+.tile-list {
+  border-spacing: 1vh;
+}
+
+.tile {
+  padding-left: 0;
+  padding-right: 0;
+}
+
+.unit-tile-chi {
+  color: red;
+  font-weight: bold;
+}
+
+.idol-tile-hidden {
+  display: none;
+}

@@ -1,26 +1,34 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React, { useContext } from 'react';
+import TitleScene from 'scene/Title';
+import GameScene from 'scene/Game';
+import SimulationScene from 'scene/Simulation';
+import useStore from 'store';
+import 'css/base.css';
+import { ApplicationContext } from 'context';
+
+const SceneSelector: React.FC = () => {
+  const { applicationMode } = useContext(ApplicationContext);
+
+  switch (applicationMode) {
+    case 'Title':
+      return <TitleScene />;
+    case 'Game':
+      return <GameScene />;
+    case 'Simulation':
+      return <SimulationScene />;
+    default:
+      return <></>;
+  }
+};
 
 const App: React.FC = () => {
+  const state = useStore();
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <ApplicationContext.Provider value={state}>
+      <SceneSelector />
+    </ApplicationContext.Provider>
   );
-}
+};
 
 export default App;
