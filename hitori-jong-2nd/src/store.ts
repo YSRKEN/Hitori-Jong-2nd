@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { loadSetting, saveSetting } from 'service/setting';
-import { ApplicationMode } from './constant/other';
+import { ApplicationMode, DEFAULT_HAND, Hand } from './constant/other';
 import { Action } from './constant/action';
 import { ApplicationState } from './context';
 import { IDOL_LIST2 } from './constant2/idol';
@@ -15,6 +15,9 @@ const useStore = (): ApplicationState => {
     setApplicationMode(mode);
     saveSetting('ApplicationMode', mode);
   };
+
+  // シミュレーション画面における手牌
+  const [myHandS] = useState<Hand>(DEFAULT_HAND);
 
   // dispatch
   const dispatch = (action: Action) => {
@@ -38,6 +41,7 @@ const useStore = (): ApplicationState => {
 
   return {
     applicationMode,
+    myHandS,
     dispatch,
   };
 };

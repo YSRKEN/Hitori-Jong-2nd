@@ -30,12 +30,14 @@ const createUnitInfo2 = () => {
 
   // ユニット一覧
   const output: UnitInfo2[] = [];
-  UNIT_LIST.forEach((unitInfo, id) => {
+  let id = 0;
+  UNIT_LIST.forEach(unitInfo => {
     const { name } = unitInfo;
     const member = unitInfo.member.map(idolName => nameToId[idolName]);
     const count = member.length;
     const score = calcScore(count);
     output.push({ id, name, member: [...member], chiFlg: false, count, score });
+    id += 1;
     if (member.length >= 3) {
       output.push({
         id,
@@ -45,6 +47,7 @@ const createUnitInfo2 = () => {
         count,
         score: calcScore(count - 1),
       });
+      id += 1;
     }
   });
 
