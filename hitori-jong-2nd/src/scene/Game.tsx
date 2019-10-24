@@ -9,7 +9,7 @@ const GameSceneBase: React.FC<{ backToTitle: () => void }> = ({
     <div className="l-header">
       <button
         type="button"
-        className="button-radius button-back-title"
+        className="default-button back-title"
         onClick={backToTitle}
       >
         タイトルに戻る

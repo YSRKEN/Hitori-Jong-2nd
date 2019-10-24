@@ -13,28 +13,25 @@ const SimulationSceneBase: React.FC<{
     <div className="l-header">
       <button
         type="button"
-        className="button-radius button-back-title"
+        className="default-button back-title"
         onClick={backToTitle}
       >
         タイトルに戻る
       </button>
     </div>
-    <h1>シミュレーション画面</h1>
     <div className="l-footer">
-      <table className="tile-list">
+      <table className="l-margin-center tile-list">
         <tbody>
           <tr>
             {myHandS.unit.map(id => {
-              const chiStyle = UNIT_LIST2[id].chiFlg
-                ? 'button-tile-unit-chi'
-                : '';
-              const widthstyle = `button-tile-width-${UNIT_LIST2[id].count}`;
+              const chiStyle = UNIT_LIST2[id].chiFlg ? 'unit-tile-chi' : '';
+              const widthstyle = `unit-tile-width-${UNIT_LIST2[id].count}`;
 
               return (
                 <td key={id} className="tile">
                   <button
                     type="button"
-                    className={`button-tile-unit ${widthstyle} ${chiStyle}`}
+                    className={`unit-tile ${widthstyle} ${chiStyle}`}
                   >
                     {UNIT_LIST2[id].name}
                   </button>
@@ -42,14 +39,14 @@ const SimulationSceneBase: React.FC<{
               );
             })}
             {myHandS.member.map(id => {
-              const fontstyle = `button-tile-idol-${IDOL_LIST2[id].fontSize}`;
-              const colorStyle = `button-tile-idol-${IDOL_LIST2[id].type}`;
+              const fontstyle = `idol-tile-${IDOL_LIST2[id].fontSize}`;
+              const colorStyle = `idol-tile-${IDOL_LIST2[id].type}`;
 
               return (
                 <td key={id} className="tile">
                   <button
                     type="button"
-                    className={`button-tile-idol ${fontstyle} ${colorStyle}`}
+                    className={`idol-tile ${fontstyle} ${colorStyle}`}
                   >
                     {IDOL_LIST2[id].name}
                   </button>

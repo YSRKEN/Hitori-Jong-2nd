@@ -36,19 +36,19 @@ const TitleSceneBase: React.FC<{
     <div className="l-footer l-text-center">
       <button
         type="button"
-        className="l-margin-right button-radius button-top button-game"
+        className="l-margin-right default-button top-menu top-menu-game"
         onClick={titleToGame}
       >
         ゲーム開始
       </button>
       <button
         type="button"
-        className="l-margin-right button-radius button-top button-simulation"
+        className="l-margin-right default-button top-menu top-menu-simulation"
         onClick={titleToSimulation}
       >
         シミュレーション
       </button>
-      <button type="button" className="button-radius button-top button-share">
+      <button type="button" className="default-button top-menu top-menu-share">
         Twitterにシェア
       </button>
     </div>
