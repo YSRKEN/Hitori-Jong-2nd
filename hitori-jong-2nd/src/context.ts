@@ -4,6 +4,7 @@ import { ApplicationMode, Hand } from './constant/other';
 
 export interface ApplicationState {
   applicationMode: ApplicationMode;
+  myHandG: Hand;
   myHandS: Hand;
   dispatch: (action: Action) => void;
 }

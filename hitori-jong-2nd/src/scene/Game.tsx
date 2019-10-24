@@ -1,5 +1,6 @@
 import React, { useContext } from 'react';
 import { ApplicationContext } from 'context';
+import MyHandTileList from 'parts/MyHandTileList';
 
 // ゲーム画面
 const GameSceneBase: React.FC<{ backToTitle: () => void }> = ({
@@ -15,7 +16,9 @@ const GameSceneBase: React.FC<{ backToTitle: () => void }> = ({
         タイトルに戻る
       </button>
     </div>
-    <h1>ゲーム画面</h1>
+    <div className="l-footer">
+      <MyHandTileList />
+    </div>
   </>
 );
 

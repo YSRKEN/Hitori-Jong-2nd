@@ -16,8 +16,17 @@ const useStore = (): ApplicationState => {
     saveSetting('ApplicationMode', mode);
   };
 
+  // ゲーム画面における手牌
+  const [myHandG] = useState<Hand>(loadSetting<Hand>(
+    'MyHandG',
+    DEFAULT_HAND,
+  ) as Hand);
+
   // シミュレーション画面における手牌
-  const [myHandS] = useState<Hand>(DEFAULT_HAND);
+  const [myHandS] = useState<Hand>(loadSetting<Hand>(
+    'MyHandS',
+    DEFAULT_HAND,
+  ) as Hand);
 
   // dispatch
   const dispatch = (action: Action) => {
@@ -41,6 +50,7 @@ const useStore = (): ApplicationState => {
 
   return {
     applicationMode,
+    myHandG,
     myHandS,
     dispatch,
   };
