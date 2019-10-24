@@ -2,7 +2,10 @@ export type ActionType =
   | 'TitleToGame'
   | 'TitleToSimulation'
   | 'BackToTitle'
-  | 'resetGame';
+  | 'resetGame'
+  | 'drawTile'
+  | 'selectUnit'
+  | 'selectMember';
 
 export interface Action {
   type: ActionType;

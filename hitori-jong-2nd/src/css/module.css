@@ -49,6 +49,11 @@
   white-space: normal;
 }
 
+.unit-tile.is-selected {
+  font-weight: bold;
+  border-width: 2px !important;
+}
+
 .unit-tile-width-1 {
   width: 11vh;
 }
@@ -88,6 +93,11 @@
   -webkit-writing-mode: vertical-rl;
   -ms-writing-mode: tb-rl;
   writing-mode: vertical-rl;
+}
+
+.idol-tile.is-selected {
+  font-weight: bold;
+  border-width: 2px !important;
 }
 
 .idol-tile-normal {

@@ -8,12 +8,13 @@ import {
   HAND_TILE_COUNT,
   TILE_COUNT,
   PRODUCER_COUNT,
+  HAND_TILE_COUNT_PLUS,
 } from 'constant/other';
 import { Action } from 'constant/action';
 import { ApplicationState } from 'context';
 import { IDOL_LIST_COUNT } from 'constant/idol';
 import { shuffleDeck } from 'service/algorithm';
-import { createHandFromArray } from 'service/hand';
+import { createHandFromArray, drawTile, calcUnitToIndex, calcMemberToIndex } from 'service/hand';
 
 const useStore = (): ApplicationState => {
   // アプリケーションの動作モード
@@ -37,6 +38,9 @@ const useStore = (): ApplicationState => {
   // シミュレーション画面における手牌
   const [myHandS] = useState(loadSetting('MyHandS', DEFAULT_HAND_S));
 
+  // 手牌の選択表示
+  const [selectedTileFlg, setSelectedTileFlg] = useState<boolean[]>([]);
+
   // ゲーム画面における牌山
   const [tileDeck, setTileDeck] = useState(
     loadSetting('TileDeck', Array<number>()),
@@ -47,10 +51,10 @@ const useStore = (): ApplicationState => {
   };
 
   // 牌山用のポインター
-  const [, setDeckPointer] = useState(loadSetting('DeckPointer', 0));
+  const [deckPointer, setDeckPointer] = useState(loadSetting('DeckPointer', 0));
 
   // 対戦相手の手牌(ゲーム画面用)
-  const [otherHand, setOtherHand] = useState(
+  const [, setOtherHand] = useState(
     loadSetting('OtherHand', Array<Hand>()),
   );
   const setOtherHand2 = (hands: Hand[]) => {
@@ -84,6 +88,12 @@ const useStore = (): ApplicationState => {
     setDeckPointer(HAND_TILE_COUNT * 4);
   };
 
+  useEffect(() => {
+    const temp = Array<boolean>(HAND_TILE_COUNT_PLUS);
+    temp.fill(false);
+    setSelectedTileFlg(temp);
+  }, [applicationMode]);
+
   // アプリケーション開始時、牌山が初期化されていない時は初期化する
   useEffect(() => {
     if (tileDeck.length === 0) {
@@ -103,17 +113,16 @@ const useStore = (): ApplicationState => {
 
   // dispatch
   const dispatch = (action: Action) => {
-    console.log(myHandG);
-    console.log(otherHand);
-    console.log(tileDeck);
-
     switch (action.type) {
+      // ゲーム画面に移る
       case 'TitleToGame':
         setApplicationMode2('Game');
         break;
+      // シミュレーション画面に移る
       case 'TitleToSimulation':
         setApplicationMode2('Simulation');
         break;
+      // タイトル画面に戻る
       case 'BackToTitle':
         setApplicationMode2('Title');
         break;
@@ -121,6 +130,31 @@ const useStore = (): ApplicationState => {
       case 'resetGame':
         resetGame();
         break;
+      // 牌をツモる
+      case 'drawTile':
+          setMyHandG2(drawTile(myHandG, tileDeck[deckPointer]));
+          setDeckPointer(deckPointer + 1);
+        break;
+      // 手牌のユニットをタップする
+      case 'selectUnit':{
+        const selectedIndex = parseInt(action.message, 10);
+        const selectedRange = calcUnitToIndex(applicationMode === 'Game' ? myHandG : myHandS);
+        const temp = [...selectedTileFlg];
+        for (let ti = selectedRange[selectedIndex].begin; ti <  selectedRange[selectedIndex].end; ti += 1) {
+          temp[ti] = !temp[ti];
+        }
+        setSelectedTileFlg(temp);
+        break;
+      }
+      // 手牌のメンバーをタップする
+      case 'selectMember':{
+        const selectedIndex = parseInt(action.message, 10);
+        const selectedRange = calcMemberToIndex(applicationMode === 'Game' ? myHandG : myHandS);
+        const temp = [...selectedTileFlg];
+        temp[selectedRange[selectedIndex]] = !temp[selectedRange[selectedIndex]];
+        setSelectedTileFlg(temp);
+        break;
+      }
       default:
         break;
     }
@@ -130,6 +164,7 @@ const useStore = (): ApplicationState => {
     applicationMode,
     myHandG,
     myHandS,
+    selectedTileFlg,
     dispatch,
   };
 };
