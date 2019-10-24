@@ -86,6 +86,11 @@ const useStore = (): ApplicationState => {
 
     // 牌を配る
     setDeckPointer(HAND_TILE_COUNT * 4);
+
+    // 選択状態もリセットする
+    const temp = Array<boolean>(HAND_TILE_COUNT_PLUS);
+    temp.fill(false);
+    setSelectedTileFlg(temp);
   };
 
   useEffect(() => {
