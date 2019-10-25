@@ -15,7 +15,9 @@ export type ActionType =
   | 'shiftRight'
   | 'injectUnit'
   | 'ejectUnit'
-  | 'copyTile';
+  | 'copyTile'
+  | 'useSora'
+  | 'selectTrash';
 
 export interface Action {
   type: ActionType;

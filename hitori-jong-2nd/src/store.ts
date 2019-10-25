@@ -23,8 +23,9 @@ import {
   swapTile,
   injectUnit,
   ejectUnit,
+  soraFunc,
 } from 'service/hand';
-import { setResetFlg, resetTrashArea, addTrashTile } from 'service/utility';
+import { setResetFlg, resetTrashArea, addTrashTile, getMemberFromTrashArea } from 'service/utility';
 
 const useStore = (): ApplicationState => {
   // アプリケーションの動作モード
@@ -77,6 +78,9 @@ const useStore = (): ApplicationState => {
     setOtherHand(hands);
     saveSetting('OtherHand', hands);
   };
+
+  // 早坂そらを使用したか？
+  const [useSoraFlg, setUseSoraFlg] = useState(false);
 
   // 「現在の手牌」を返す
   const getMyHand = () => {
@@ -300,6 +304,23 @@ const useStore = (): ApplicationState => {
       case 'showTrash':
         setApplicationMode('Trash');
         break;
+      // 早坂そらを使用する
+      case 'useSora':
+        setUseSoraFlg(true);
+        setApplicationMode('Trash');
+        break;
+      // 捨て牌を選択した際の動き
+      case 'selectTrash':{
+        if (useSoraFlg) {
+          const temp = action.message.split(',');
+          const idolId = parseInt(temp[0], 10);
+          const pId = parseInt(temp[1], 10);
+          setMyHandG2(soraFunc(myHandG, idolId));
+          getMemberFromTrashArea(pId, idolId);
+          setApplicationMode2('Game');
+        }
+        break;
+      }
       default:
         break;
     }

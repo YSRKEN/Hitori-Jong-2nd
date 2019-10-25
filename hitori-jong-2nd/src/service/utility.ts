@@ -47,3 +47,27 @@ export const addTrashTile = (idolId: number, memberIndex: number) => {
   }
   saveSetting('TrashTileArea', temp);
 };
+
+// 控え室から牌を拾う(早坂そら用)
+export const getMemberFromTrashArea = (pid: number, idolId: number) => {
+  const trashArea = getTrashArea();
+  // 控え室の状態を複製
+  const temp: number[][] = [];
+  for (let mi = 0; mi < PRODUCER_COUNT; mi += 1) {
+    if (mi !== pid) {
+      temp.push([...trashArea[mi]]);
+    } else {
+      let flg = false;
+      const temp2: number[] = [];
+      for (const member of trashArea[mi]) {
+        if (member === idolId && !flg) {
+          flg = true;
+        } else {
+          temp2.push(member);
+        }
+      }
+      temp.push(temp2);
+    }
+  }
+  saveSetting('TrashTileArea', temp);
+};

@@ -168,6 +168,28 @@ export const ejectUnit = (hand: Hand, selectedUnitFlg: boolean[]): Hand => {
   };
 };
 
+// 早坂そらを使用した後の手牌を返す
+export const soraFunc = (hand: Hand, idolId: number): Hand => {
+  const newMember: number[] = [];
+  let soraFlg = false;
+  hand.member.forEach(id => {
+    if (id !== SORA_ID) {
+      newMember.push(id);
+    } else {
+      if (!soraFlg) {
+        soraFlg = true;
+        newMember.push(idolId);
+      } else {
+        newMember.push(id);
+      }
+    }
+  })
+  return {
+    unit: [...hand.unit],
+    member: newMember,
+  };
+};
+
 // 手牌をカウントする
 export const countHand = (hand: Hand) => {
   if (hand.member[hand.member.length - 1] < 0) {

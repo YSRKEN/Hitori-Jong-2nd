@@ -23,6 +23,7 @@ const GameSceneBase: React.FC<{
   ejectUnit: () => void;
   showTrash: () => void;
   copyTile: () => void;
+  useSora: () => void;
 }> = ({
   drawFlg,
   soraFlg,
@@ -39,6 +40,7 @@ const GameSceneBase: React.FC<{
   ejectUnit,
   showTrash,
   copyTile,
+  useSora,
 }) => (
   <>
     <div className="l-header">
@@ -59,7 +61,7 @@ const GameSceneBase: React.FC<{
     </div>
     <div className="l-main-game">
       <CommandButton text="ツモ" showFlg={drawFlg} onClick={drawTile} />
-      <CommandButton text="使用：そら" showFlg={drawFlg && soraFlg} />
+      <CommandButton text="使用：そら" showFlg={drawFlg && soraFlg} onClick={useSora} />
       <CommandButton
         text="打牌"
         showFlg={
@@ -173,6 +175,7 @@ const GameScene: React.FC = () => {
       ejectUnit={() => dispatch({ type: 'ejectUnit', message: '' })}
       showTrash={() => dispatch({ type: 'showTrash', message: '' })}
       copyTile={() => dispatch({ type: 'copyTile', message: '' })}
+      useSora={() => dispatch({ type: 'useSora', message: '' })}
     />
   );
 };
