@@ -16,6 +16,32 @@ const SimulationSceneBase: React.FC<{
         タイトルに戻る
       </button>
     </div>
+    <div className="l-main-simulation">
+      <button type="button" className="l-margin-right default-button command">
+        交換
+      </button>
+      <button type="button" className="l-margin-right default-button command">
+        右シフト
+      </button>
+      <button type="button" className="l-margin-right default-button command">
+        左シフト
+      </button>
+      <button type="button" className="l-margin-right default-button command">
+        固定：ユニット
+      </button>
+      <button type="button" className="l-margin-right default-button command">
+        解除：ユニット
+      </button>
+      <button type="button" className="l-margin-right default-button command">
+        ユニット？
+      </button>
+      <button type="button" className="l-margin-right default-button command">
+        受け入れ？
+      </button>
+      <button type="button" className="l-margin-right default-button command">
+        何切る？
+      </button>
+    </div>
     <div className="l-footer">
       <MyHandTileList />
     </div>

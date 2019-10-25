@@ -25,7 +25,7 @@ const TitleSceneBase: React.FC<{
         取扱説明書
       </a>
     </div>
-    <div className="l-main">
+    <div className="l-main-title">
       <div className="l-text-center">
         <span className="application-title">{APPLICATION_NAME}</span>
       </div>

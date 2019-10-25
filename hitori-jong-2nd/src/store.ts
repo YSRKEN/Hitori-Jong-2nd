@@ -147,6 +147,7 @@ const useStore = (): ApplicationState => {
       case 'drawTile':
         setMyHandG2(drawTile(myHandG, tileDeck[deckPointer]));
         setDeckPointer(deckPointer + 1);
+        resetSelectedTileFlg();
         break;
       // 手牌のユニットをタップする
       case 'selectUnit': {

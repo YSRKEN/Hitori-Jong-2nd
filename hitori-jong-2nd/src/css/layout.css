@@ -4,7 +4,7 @@
   margin-top: 5vh;
 }
 
-.l-main {
+.l-main-title {
   margin-top: 15vh;
 }
 
@@ -16,6 +16,16 @@
 
 .l-margin-right {
   margin-right: 5vh;
+}
+
+.l-main-simulation {
+  margin-left: 10vh;
+  margin-top: 10vh;
+}
+
+.l-main-game {
+  margin-left: 10vh;
+  margin-top: 10vh;
 }
 
 .l-text-center {

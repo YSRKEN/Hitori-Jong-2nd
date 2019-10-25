@@ -26,6 +26,12 @@
   border-radius: 2vh;
 }
 
+.command {
+  background-color: lightgreen;
+  font-size: 5vh;
+  padding: 1vh 2vh 1vh 2vh;
+}
+
 .top-menu {
   font-size: 7vh;
   padding: 2vh 3vh 2vh 3vh;
@@ -50,8 +56,8 @@
 }
 
 .unit-tile.is-selected {
-  font-weight: bold;
   border-width: 2px !important;
+  font-weight: bold;
 }
 
 .unit-tile-width-1 {
@@ -96,8 +102,8 @@
 }
 
 .idol-tile.is-selected {
-  font-weight: bold;
   border-width: 2px !important;
+  font-weight: bold;
 }
 
 .idol-tile-normal {
