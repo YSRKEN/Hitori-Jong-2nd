@@ -22,6 +22,7 @@ const GameSceneBase: React.FC<{
   injectUnit: () => void;
   ejectUnit: () => void;
   showTrash: () => void;
+  copyTile: () => void;
 }> = ({
   drawFlg,
   soraFlg,
@@ -37,6 +38,7 @@ const GameSceneBase: React.FC<{
   injectUnit,
   ejectUnit,
   showTrash,
+  copyTile,
 }) => (
   <>
     <div className="l-header">
@@ -103,7 +105,7 @@ const GameSceneBase: React.FC<{
         showFlg={!drawFlg}
         onClick={showTrash}
       />
-      <CommandButton text="転送：手牌" showFlg={!drawFlg} />
+      <CommandButton text="転送：手牌" showFlg={!drawFlg} onClick={copyTile} />
     </div>
     <div className="l-footer">
       <MyHandTileList />
@@ -170,6 +172,7 @@ const GameScene: React.FC = () => {
       injectUnit={() => dispatch({ type: 'injectUnit', message: '' })}
       ejectUnit={() => dispatch({ type: 'ejectUnit', message: '' })}
       showTrash={() => dispatch({ type: 'showTrash', message: '' })}
+      copyTile={() => dispatch({ type: 'copyTile', message: '' })}
     />
   );
 };

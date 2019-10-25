@@ -8,7 +8,8 @@ const SimulationSceneBase: React.FC<{
   selectedUnitCount: number;
   selectedMemberCount: number;
   backToTitle: () => void;
-}> = ({ selectedUnitCount, selectedMemberCount, backToTitle }) => (
+  backToGame: () => void;
+}> = ({ selectedUnitCount, selectedMemberCount, backToTitle, backToGame }) => (
   <>
     <div className="l-header">
       <button
@@ -43,6 +44,7 @@ const SimulationSceneBase: React.FC<{
       <CommandButton text="ユニット？" showFlg />
       <CommandButton text="受け入れ？" showFlg />
       <CommandButton text="何切る？" showFlg />
+      <CommandButton text="ゲーム画面に遷移" showFlg onClick={backToGame}/>
     </div>
     <div className="l-footer">
       <MyHandTileList />
@@ -60,6 +62,7 @@ const SimulationScene: React.FC = () => {
       selectedUnitCount={selectedUnitFlg.filter(flg => flg).length}
       selectedMemberCount={selectedMemberFlg.filter(flg => flg).length}
       backToTitle={() => dispatch({ type: 'BackToTitle', message: '' })}
+      backToGame={() => dispatch({ type: 'BackToGame', message: '' })}
     />
   );
 };

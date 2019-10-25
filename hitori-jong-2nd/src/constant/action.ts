@@ -14,7 +14,8 @@ export type ActionType =
   | 'swapTile'
   | 'shiftRight'
   | 'injectUnit'
-  | 'ejectUnit';
+  | 'ejectUnit'
+  | 'copyTile';
 
 export interface Action {
   type: ActionType;

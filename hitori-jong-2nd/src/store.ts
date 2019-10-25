@@ -289,6 +289,13 @@ const useStore = (): ApplicationState => {
         resetSelectedTileFlg();
         break;
       }
+      // ゲーム画面→シミュレーション画面に手牌を転送する
+      case 'copyTile':
+        setMyHandS2({unit: [...myHandG.unit], member: [...myHandG.member]});
+        if (window.confirm('シミュレーション画面に遷移しますか？')) {
+          setApplicationMode2('Simulation');
+        }
+        break;
       // 控え室を表示する
       case 'showTrash':
         setApplicationMode('Trash');
