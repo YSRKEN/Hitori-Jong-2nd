@@ -15,7 +15,7 @@ import { ApplicationState } from 'context';
 import { IDOL_LIST_COUNT } from 'constant/idol';
 import { shuffleDeck } from 'service/algorithm';
 import { createHandFromArray, drawTile, trashTile } from 'service/hand';
-import { setResetFlg } from 'service/utility';
+import { setResetFlg, resetTrashArea, addTrashTile } from 'service/utility';
 
 const useStore = (): ApplicationState => {
   // アプリケーションの動作モード
@@ -61,36 +61,6 @@ const useStore = (): ApplicationState => {
   const setOtherHand2 = (hands: Hand[]) => {
     setOtherHand(hands);
     saveSetting('OtherHand', hands);
-  };
-
-  // 控え室を初期化する
-  const resetTrashArea = () => {
-    saveSetting('TrashTileArea', [
-      Array<number>(),
-      Array<number>(),
-      Array<number>(),
-      Array<number>(),
-    ]);
-  };
-
-  // 控え室に牌を追加する
-  const addTrashTile = (idolId: number, memberIndex: number) => {
-    const trashArea = loadSetting<number[][]>('TrashTileArea', [
-      Array<number>(),
-      Array<number>(),
-      Array<number>(),
-      Array<number>(),
-    ]);
-    // 控え室の状態を複製
-    const temp: number[][] = [];
-    for (let mi = 0; mi < PRODUCER_COUNT; mi += 1) {
-      if (mi !== memberIndex) {
-        temp.push([...trashArea[mi]]);
-      } else {
-        temp.push([...trashArea[mi], idolId]);
-      }
-    }
-    saveSetting('TrashTileArea', temp);
   };
 
   // 手牌の選択状態をリセットする
@@ -190,6 +160,10 @@ const useStore = (): ApplicationState => {
       case 'BackToTitle':
         setApplicationMode2('Title');
         break;
+      // ゲーム画面に戻る
+      case 'BackToGame':
+        setApplicationMode2('Game');
+        break;
       // ゲーム状態をリセットする
       case 'resetGame':
         resetGame();
@@ -247,6 +221,10 @@ const useStore = (): ApplicationState => {
         setSelectedMemberFlg(temp);
         break;
       }
+      // 控え室を表示する
+      case 'showTrash':
+        setApplicationMode('Trash');
+        break;
       default:
         break;
     }

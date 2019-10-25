@@ -18,7 +18,16 @@
   margin-right: 5vh;
 }
 
+.l-margin-bottom {
+  margin-bottom: 5vh;
+}
+
 .l-main-simulation {
+  margin-left: 10vh;
+  margin-top: 10vh;
+}
+
+.l-main-trash {
   margin-left: 10vh;
   margin-top: 10vh;
 }
