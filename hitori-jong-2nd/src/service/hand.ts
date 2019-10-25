@@ -1,4 +1,5 @@
 import { SORA_ID } from 'constant2/idol';
+import { UNIT_LIST2 } from 'constant2/unit';
 import { Hand, HAND_TILE_COUNT, HAND_TILE_COUNT_PLUS } from '../constant/other';
 
 // 数字の配列(12枚)を手牌としてあてがう
@@ -94,6 +95,59 @@ export const swapTile = (hand: Hand, selectedMemberFlg: boolean[]): Hand => {
   const temp = newMember[pos1];
   newMember[pos1] = newMember[pos2];
   newMember[pos2] = temp;
+
+  return {
+    unit: [...hand.unit],
+    member: newMember,
+  };
+};
+
+// ユニットを結成
+export const injectUnit = (hand: Hand, selectedMemberFlg: boolean[]): Hand => {
+  // 選択された手牌を取り出す
+  const member = hand.member.filter((_, index) => selectedMemberFlg[index]);
+
+  // 選択された手牌について、当てはまるユニットがあるかを調べる
+  const memberSet = new Set(member);
+  const unit = UNIT_LIST2.filter(unitInfo => {
+    if (unitInfo.member.length !== member.length) {
+      return false;
+    }
+
+    return (
+      unitInfo.member.filter(id => memberSet.has(id)).length === member.length
+    );
+  });
+
+  // ユニットがあるかによって条件分岐
+  if (unit.length > 0) {
+    const newMember: number[] = [];
+    const temp = new Set<number>();
+    hand.member.forEach(id => {
+      if (memberSet.has(id) && !temp.has(id)) {
+        temp.add(id);
+
+        return;
+      }
+      newMember.push(id);
+    });
+
+    return {
+      unit: [...hand.unit, unit[0].id],
+      member: newMember,
+    };
+  }
+
+  return {
+    unit: [...hand.unit],
+    member: [...hand.member],
+  };
+};
+
+// ユニットを解除
+export const ejectUnit = (hand: Hand, selectedMemberFlg: boolean[]): Hand => {
+  // 選択されたユニットを取り出す
+  const newMember = hand.member.map(id => (selectedMemberFlg[id] ? id : 0));
 
   return {
     unit: [...hand.unit],

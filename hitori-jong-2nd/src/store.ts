@@ -21,6 +21,8 @@ import {
   shiftLeft,
   shiftRight,
   swapTile,
+  injectUnit,
+  ejectUnit,
 } from 'service/hand';
 import { setResetFlg, resetTrashArea, addTrashTile } from 'service/utility';
 
@@ -270,6 +272,20 @@ const useStore = (): ApplicationState => {
       case 'swapTile': {
         const myHand = getMyHand();
         setMyHand(swapTile(myHand, selectedMemberFlg));
+        resetSelectedTileFlg();
+        break;
+      }
+      // 選択した手牌でユニットを結成する
+      case 'injectUnit': {
+        const myHand = getMyHand();
+        setMyHand(injectUnit(myHand, selectedMemberFlg));
+        resetSelectedTileFlg();
+        break;
+      }
+      // 選択した手牌のユニットを解除する
+      case 'ejectUnit': {
+        const myHand = getMyHand();
+        setMyHand(ejectUnit(myHand, selectedUnitFlg));
         resetSelectedTileFlg();
         break;
       }

@@ -19,6 +19,8 @@ const GameSceneBase: React.FC<{
   shiftLeft: () => void;
   shiftRight: () => void;
   swapTile: () => void;
+  injectUnit: () => void;
+  ejectUnit: () => void;
   showTrash: () => void;
 }> = ({
   drawFlg,
@@ -32,6 +34,8 @@ const GameSceneBase: React.FC<{
   shiftLeft,
   shiftRight,
   swapTile,
+  injectUnit,
+  ejectUnit,
   showTrash,
 }) => (
   <>
@@ -87,10 +91,12 @@ const GameSceneBase: React.FC<{
         showFlg={
           !drawFlg && selectedUnitCount === 0 && selectedMemberCount >= 1
         }
+        onClick={injectUnit}
       />
       <CommandButton
         text="解除：ユニット"
         showFlg={!drawFlg && selectedUnitCount > 0 && selectedMemberCount === 0}
+        onClick={ejectUnit}
       />
       <CommandButton
         text="確認：控え室"
@@ -161,6 +167,8 @@ const GameScene: React.FC = () => {
       shiftLeft={() => dispatch({ type: 'shiftLeft', message: '' })}
       shiftRight={() => dispatch({ type: 'shiftRight', message: '' })}
       swapTile={() => dispatch({ type: 'swapTile', message: '' })}
+      injectUnit={() => dispatch({ type: 'injectUnit', message: '' })}
+      ejectUnit={() => dispatch({ type: 'ejectUnit', message: '' })}
       showTrash={() => dispatch({ type: 'showTrash', message: '' })}
     />
   );

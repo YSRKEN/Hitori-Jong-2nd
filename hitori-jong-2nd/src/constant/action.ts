@@ -12,7 +12,9 @@ export type ActionType =
   | 'showTrash'
   | 'shiftLeft'
   | 'swapTile'
-  | 'shiftRight';
+  | 'shiftRight'
+  | 'injectUnit'
+  | 'ejectUnit';
 
 export interface Action {
   type: ActionType;
