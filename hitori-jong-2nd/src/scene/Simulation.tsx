@@ -25,11 +25,11 @@ const SimulationSceneBase: React.FC<{
         showFlg={selectedUnitCount === 0 && selectedMemberCount === 2}
       />
       <CommandButton
-        text="右シフト"
+        text="左シフト"
         showFlg={selectedUnitCount === 0 && selectedMemberCount >= 1}
       />
       <CommandButton
-        text="左シフト"
+        text="右シフト"
         showFlg={selectedUnitCount === 0 && selectedMemberCount >= 1}
       />
       <CommandButton

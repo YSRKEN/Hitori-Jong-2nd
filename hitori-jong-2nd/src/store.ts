@@ -14,7 +14,14 @@ import { Action } from 'constant/action';
 import { ApplicationState } from 'context';
 import { IDOL_LIST_COUNT } from 'constant/idol';
 import { shuffleDeck } from 'service/algorithm';
-import { createHandFromArray, drawTile, trashTile } from 'service/hand';
+import {
+  createHandFromArray,
+  drawTile,
+  trashTile,
+  shiftLeft,
+  shiftRight,
+  swapTile,
+} from 'service/hand';
 import { setResetFlg, resetTrashArea, addTrashTile } from 'service/utility';
 
 const useStore = (): ApplicationState => {
@@ -37,7 +44,13 @@ const useStore = (): ApplicationState => {
   };
 
   // シミュレーション画面における手牌
-  const [myHandS] = useState(loadSetting('MyHandS', DEFAULT_HAND_S));
+  const [myHandS, setMyHandS] = useState(
+    loadSetting('MyHandS', DEFAULT_HAND_S),
+  );
+  const setMyHandS2 = (hand: Hand) => {
+    setMyHandS(hand);
+    saveSetting('MyHandS', hand);
+  };
 
   // 手牌のユニットの選択表示
   const [selectedUnitFlg, setSelectedUnitFlg] = useState<boolean[]>([]);
@@ -63,9 +76,19 @@ const useStore = (): ApplicationState => {
     saveSetting('OtherHand', hands);
   };
 
+  // 「現在の手牌」を返す
+  const getMyHand = () => {
+    return applicationMode === 'Game' ? myHandG : myHandS;
+  };
+
+  // 「現在の手牌」を更新する
+  const setMyHand = (hand: Hand) => {
+    return applicationMode === 'Game' ? setMyHandG2(hand) : setMyHandS2(hand);
+  };
+
   // 手牌の選択状態をリセットする
   const resetSelectedTileFlg = () => {
-    const myHand = applicationMode === 'Game' ? myHandG : myHandS;
+    const myHand = getMyHand();
     const temp = Array<boolean>(myHand.unit.length);
     temp.fill(false);
     setSelectedUnitFlg(temp);
@@ -219,6 +242,35 @@ const useStore = (): ApplicationState => {
         const temp = [...selectedMemberFlg];
         temp[selectedIndex] = !temp[selectedIndex];
         setSelectedMemberFlg(temp);
+        break;
+      }
+      // 選択した手牌のメンバーを左にシフトさせる
+      case 'shiftLeft': {
+        const myHand = getMyHand();
+        const { newHand, newSelectedMemberFlg } = shiftLeft(
+          myHand,
+          selectedMemberFlg,
+        );
+        setMyHand(newHand);
+        setSelectedMemberFlg(newSelectedMemberFlg);
+        break;
+      }
+      // 選択した手牌のメンバーを右にシフトさせる
+      case 'shiftRight': {
+        const myHand = getMyHand();
+        const { newHand, newSelectedMemberFlg } = shiftRight(
+          myHand,
+          selectedMemberFlg,
+        );
+        setMyHand(newHand);
+        setSelectedMemberFlg(newSelectedMemberFlg);
+        break;
+      }
+      // 選択した手牌のメンバーを交換する
+      case 'swapTile': {
+        const myHand = getMyHand();
+        setMyHand(swapTile(myHand, selectedMemberFlg));
+        resetSelectedTileFlg();
         break;
       }
       // 控え室を表示する

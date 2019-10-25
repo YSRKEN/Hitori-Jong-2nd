@@ -9,7 +9,10 @@ export type ActionType =
   | 'selectUnit'
   | 'selectMember'
   | 'moveOtherProducer'
-  | 'showTrash';
+  | 'showTrash'
+  | 'shiftLeft'
+  | 'swapTile'
+  | 'shiftRight';
 
 export interface Action {
   type: ActionType;

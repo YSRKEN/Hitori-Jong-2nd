@@ -16,6 +16,9 @@ const GameSceneBase: React.FC<{
   resetGame: () => void;
   drawTile: () => void;
   trashTile: () => void;
+  shiftLeft: () => void;
+  shiftRight: () => void;
+  swapTile: () => void;
   showTrash: () => void;
 }> = ({
   drawFlg,
@@ -26,6 +29,9 @@ const GameSceneBase: React.FC<{
   resetGame,
   drawTile,
   trashTile,
+  shiftLeft,
+  shiftRight,
+  swapTile,
   showTrash,
 }) => (
   <>
@@ -60,18 +66,21 @@ const GameSceneBase: React.FC<{
         showFlg={
           !drawFlg && selectedUnitCount === 0 && selectedMemberCount === 2
         }
-      />
-      <CommandButton
-        text="右シフト"
-        showFlg={
-          !drawFlg && selectedUnitCount === 0 && selectedMemberCount >= 1
-        }
+        onClick={swapTile}
       />
       <CommandButton
         text="左シフト"
         showFlg={
           !drawFlg && selectedUnitCount === 0 && selectedMemberCount >= 1
         }
+        onClick={shiftLeft}
+      />
+      <CommandButton
+        text="右シフト"
+        showFlg={
+          !drawFlg && selectedUnitCount === 0 && selectedMemberCount >= 1
+        }
+        onClick={shiftRight}
       />
       <CommandButton
         text="固定：ユニット"
@@ -149,6 +158,9 @@ const GameScene: React.FC = () => {
       resetGame={resetGame}
       drawTile={() => dispatch({ type: 'drawTile', message: '' })}
       trashTile={trashTile}
+      shiftLeft={() => dispatch({ type: 'shiftLeft', message: '' })}
+      shiftRight={() => dispatch({ type: 'shiftRight', message: '' })}
+      swapTile={() => dispatch({ type: 'swapTile', message: '' })}
       showTrash={() => dispatch({ type: 'showTrash', message: '' })}
     />
   );

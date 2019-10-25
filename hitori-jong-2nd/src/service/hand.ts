@@ -33,6 +33,74 @@ export const trashTile = (hand: Hand, memberIndex: number): Hand => {
   };
 };
 
+// 選択した牌を左にシフト
+export const shiftLeft = (hand: Hand, selectedMemberFlg: boolean[]) => {
+  const newMember = [...hand.member];
+  const newSelectedMemberFlg = [...selectedMemberFlg];
+  for (let mi = 1; mi < hand.member.length; mi += 1) {
+    if (selectedMemberFlg[mi]) {
+      const temp = newMember[mi - 1];
+      newMember[mi - 1] = newMember[mi];
+      newMember[mi] = temp;
+      const temp2 = newSelectedMemberFlg[mi - 1];
+      newSelectedMemberFlg[mi - 1] = newSelectedMemberFlg[mi];
+      newSelectedMemberFlg[mi] = temp2;
+    }
+  }
+  const newHand = {
+    unit: [...hand.unit],
+    member: newMember,
+  };
+
+  return { newHand, newSelectedMemberFlg };
+};
+
+// 選択した牌を右にシフト
+export const shiftRight = (hand: Hand, selectedMemberFlg: boolean[]) => {
+  const newMember = [...hand.member];
+  const newSelectedMemberFlg = [...selectedMemberFlg];
+  for (let mi = hand.member.length - 2; mi >= 0; mi -= 1) {
+    if (selectedMemberFlg[mi]) {
+      const temp = newMember[mi + 1];
+      newMember[mi + 1] = newMember[mi];
+      newMember[mi] = temp;
+      const temp2 = newSelectedMemberFlg[mi + 1];
+      newSelectedMemberFlg[mi + 1] = newSelectedMemberFlg[mi];
+      newSelectedMemberFlg[mi] = temp2;
+    }
+  }
+  const newHand = {
+    unit: [...hand.unit],
+    member: newMember,
+  };
+
+  return { newHand, newSelectedMemberFlg };
+};
+
+// 選択した牌を交換
+export const swapTile = (hand: Hand, selectedMemberFlg: boolean[]): Hand => {
+  // 選択した位置を調べる
+  const pos1 = selectedMemberFlg.indexOf(true);
+  let pos2 = pos1;
+  for (let mi = pos1 + 1; mi < hand.member.length; mi += 1) {
+    if (selectedMemberFlg[mi]) {
+      pos2 = mi;
+      break;
+    }
+  }
+
+  // 交換を実施
+  const newMember = [...hand.member];
+  const temp = newMember[pos1];
+  newMember[pos1] = newMember[pos2];
+  newMember[pos2] = temp;
+
+  return {
+    unit: [...hand.unit],
+    member: newMember,
+  };
+};
+
 // 手牌をカウントする
 export const countHand = (hand: Hand) => {
   if (hand.member[hand.member.length - 1] < 0) {
