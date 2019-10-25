@@ -15,6 +15,7 @@ import { ApplicationState } from 'context';
 import { IDOL_LIST_COUNT } from 'constant/idol';
 import { shuffleDeck } from 'service/algorithm';
 import { createHandFromArray, drawTile, trashTile } from 'service/hand';
+import { setResetFlg } from 'service/utility';
 
 const useStore = (): ApplicationState => {
   // アプリケーションの動作モード
@@ -53,33 +54,43 @@ const useStore = (): ApplicationState => {
     saveSetting('TileDeck', deck);
   };
 
-  // 牌山用のポインター
-  const [deckPointer, setDeckPointer] = useState(loadSetting('DeckPointer', 0));
-
   // 対戦相手の手牌(ゲーム画面用)
-  const [, setOtherHand] = useState(loadSetting('OtherHand', Array<Hand>()));
+  const [otherHand, setOtherHand] = useState(
+    loadSetting('OtherHand', Array<Hand>()),
+  );
   const setOtherHand2 = (hands: Hand[]) => {
     setOtherHand(hands);
     saveSetting('OtherHand', hands);
   };
 
-  // 控え室
-  const [trashTileArea, setTrashTileArea] = useState(
-    loadSetting<number[][]>('TrashTileArea', []),
-  );
-  const setTrashTileArea2 = (trashArea: number[][]) => {
-    setTrashTileArea(trashArea);
-    saveSetting('TrashTileArea', trashArea);
+  // 控え室を初期化する
+  const resetTrashArea = () => {
+    saveSetting('TrashTileArea', [
+      Array<number>(),
+      Array<number>(),
+      Array<number>(),
+      Array<number>(),
+    ]);
   };
+
+  // 控え室に牌を追加する
   const addTrashTile = (idolId: number, memberIndex: number) => {
+    const trashArea = loadSetting<number[][]>('TrashTileArea', [
+      Array<number>(),
+      Array<number>(),
+      Array<number>(),
+      Array<number>(),
+    ]);
     // 控え室の状態を複製
     const temp: number[][] = [];
-    for (const record of trashTileArea) {
-      temp.push([...record]);
+    for (let mi = 0; mi < PRODUCER_COUNT; mi += 1) {
+      if (mi !== memberIndex) {
+        temp.push([...trashArea[mi]]);
+      } else {
+        temp.push([...trashArea[mi], idolId]);
+      }
     }
-    // 控え室の状態を更新
-    temp[memberIndex] = [...temp[memberIndex], idolId];
-    setTrashTileArea2(temp);
+    saveSetting('TrashTileArea', temp);
   };
 
   // 手牌の選択状態をリセットする
@@ -95,6 +106,8 @@ const useStore = (): ApplicationState => {
 
   // リセットとして、洗牌・配牌を行う
   const resetGame = (tileDeckTemp?: number[]) => {
+    setResetFlg(false);
+
     let tileDeckTemp2 =
       typeof tileDeckTemp !== 'undefined' ? [...tileDeckTemp] : [...tileDeck];
     tileDeckTemp2 = shuffleDeck(tileDeckTemp2);
@@ -116,18 +129,28 @@ const useStore = (): ApplicationState => {
     setOtherHand2(otherHandtemp);
 
     // 控え室の状態をリセットする
-    setTrashTileArea2([
-      Array<number>(),
-      Array<number>(),
-      Array<number>(),
-      Array<number>(),
-    ]);
+    resetTrashArea();
 
     // 牌を配る
-    setDeckPointer(HAND_TILE_COUNT * 4);
+    saveSetting('DeckPointer', HAND_TILE_COUNT * 4);
 
     // 選択状態もリセットする
     resetSelectedTileFlg();
+  };
+
+  // 牌山から牌を取る
+  const drawTileFromDeck = (): number => {
+    const deckPointer = loadSetting('DeckPointer', 0);
+
+    if (tileDeck.length > deckPointer) {
+      const tile = tileDeck[deckPointer];
+      saveSetting('DeckPointer', deckPointer + 1);
+
+      return tile;
+    }
+    setResetFlg(true);
+
+    return 0;
   };
 
   useEffect(() => {
@@ -173,8 +196,7 @@ const useStore = (): ApplicationState => {
         break;
       // 牌をツモる
       case 'drawTile':
-        setMyHandG2(drawTile(myHandG, tileDeck[deckPointer]));
-        setDeckPointer(deckPointer + 1);
+        setMyHandG2(drawTile(myHandG, drawTileFromDeck()));
         resetSelectedTileFlg();
         break;
       // 牌を切る
@@ -185,6 +207,28 @@ const useStore = (): ApplicationState => {
         setMyHandG2(trashTile(myHandG, trashedTileIndex));
         addTrashTile(trashedMember, USER_MEMBER_INDEX);
         resetSelectedTileFlg();
+        break;
+      }
+      // 他家の操作(とりあえずツモ切りだけさせる)
+      case 'moveOtherProducer': {
+        // メンバーを特定
+        const memberIndex = parseInt(action.message, 10);
+
+        // 牌を引く
+        const enemyHand = otherHand[memberIndex];
+        const newEnemyHand = drawTile(enemyHand, drawTileFromDeck());
+
+        // 牌を捨てる
+        const trashedMember =
+          newEnemyHand.member[newEnemyHand.member.length - 1];
+        const newEnemyHand2 = trashTile(
+          newEnemyHand,
+          newEnemyHand.member.length - 1,
+        );
+        addTrashTile(trashedMember, memberIndex + 1);
+        const newOtherHand = [...otherHand];
+        newOtherHand[memberIndex] = newEnemyHand2;
+        setOtherHand2(newOtherHand);
         break;
       }
       // 手牌のユニットをタップする

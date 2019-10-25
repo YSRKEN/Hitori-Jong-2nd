@@ -6,7 +6,8 @@ export type ActionType =
   | 'drawTile'
   | 'trashTile'
   | 'selectUnit'
-  | 'selectMember';
+  | 'selectMember'
+  | 'moveOtherProducer';
 
 export interface Action {
   type: ActionType;

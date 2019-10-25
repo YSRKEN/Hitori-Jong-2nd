@@ -3,6 +3,7 @@ import { ApplicationContext } from 'context';
 import MyHandTileList from 'parts/MyHandTileList';
 import CommandButton from 'parts/CommandButton';
 import { countHand, hasSora } from 'service/hand';
+import { getResetFlg } from 'service/utility';
 import { HAND_TILE_COUNT } from 'constant/other';
 
 // ゲーム画面
@@ -100,6 +101,38 @@ const GameScene: React.FC = () => {
     }
   };
 
+  const trashTile = () => {
+    let resetFlg = false;
+    // eslint-disable-next-line no-constant-condition
+    while (true) {
+      dispatch({ type: 'trashTile', message: '' });
+      if (getResetFlg()) {
+        resetFlg = true;
+        break;
+      }
+      dispatch({ type: 'moveOtherProducer', message: '0' });
+      if (getResetFlg()) {
+        resetFlg = true;
+        break;
+      }
+      dispatch({ type: 'moveOtherProducer', message: '1' });
+      if (getResetFlg()) {
+        resetFlg = true;
+        break;
+      }
+      dispatch({ type: 'moveOtherProducer', message: '2' });
+      if (getResetFlg()) {
+        resetFlg = true;
+        break;
+      }
+      break;
+    }
+    if (resetFlg) {
+      window.alert('牌山から牌を引ききりました。盤面をリセットします。');
+      dispatch({ type: 'resetGame', message: '' });
+    }
+  };
+
   return (
     <GameSceneBase
       drawFlg={countHand(myHandG) === HAND_TILE_COUNT}
@@ -109,7 +142,7 @@ const GameScene: React.FC = () => {
       backToTitle={() => dispatch({ type: 'BackToTitle', message: '' })}
       resetGame={resetGame}
       drawTile={() => dispatch({ type: 'drawTile', message: '' })}
-      trashTile={() => dispatch({ type: 'trashTile', message: '' })}
+      trashTile={trashTile}
     />
   );
 };
