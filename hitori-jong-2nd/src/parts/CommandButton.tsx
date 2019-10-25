@@ -3,11 +3,11 @@ import React from 'react';
 // コマンドボタン
 const CommandButton: React.FC<{
   text: string;
-  hiddenFlg: boolean;
+  showFlg: boolean;
   onClick?: () => void;
-}> = ({ text, hiddenFlg, onClick = () => {} }) => {
+}> = ({ text, showFlg, onClick = () => {} }) => {
   let css = 'l-margin-right default-button command';
-  if (hiddenFlg) {
+  if (!showFlg) {
     css += ' is-display-none';
   }
 

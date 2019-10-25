@@ -41,46 +41,44 @@ const GameSceneBase: React.FC<{
       </button>
     </div>
     <div className="l-main-game">
-      <CommandButton text="ツモ" hiddenFlg={!drawFlg} onClick={drawTile} />
-      <CommandButton text="使用：そら" hiddenFlg={!drawFlg || !soraFlg} />
+      <CommandButton text="ツモ" showFlg={drawFlg} onClick={drawTile} />
+      <CommandButton text="使用：そら" showFlg={drawFlg && soraFlg} />
       <CommandButton
         text="打牌"
-        hiddenFlg={
-          drawFlg || selectedUnitCount > 0 || selectedMemberCount !== 1
+        showFlg={
+          !drawFlg && selectedUnitCount === 0 && selectedMemberCount === 1
         }
       />
       <CommandButton
         text="交換"
-        hiddenFlg={
-          drawFlg || selectedUnitCount > 0 || selectedMemberCount !== 2
+        showFlg={
+          !drawFlg && selectedUnitCount === 0 && selectedMemberCount === 2
         }
       />
       <CommandButton
         text="右シフト"
-        hiddenFlg={
-          drawFlg || selectedUnitCount > 0 || selectedMemberCount === 0
+        showFlg={
+          !drawFlg && selectedUnitCount === 0 && selectedMemberCount >= 1
         }
       />
       <CommandButton
         text="左シフト"
-        hiddenFlg={
-          drawFlg || selectedUnitCount > 0 || selectedMemberCount === 0
+        showFlg={
+          !drawFlg && selectedUnitCount === 0 && selectedMemberCount >= 1
         }
       />
       <CommandButton
         text="固定：ユニット"
-        hiddenFlg={
-          drawFlg || selectedUnitCount > 0 || selectedMemberCount === 0
+        showFlg={
+          !drawFlg && selectedUnitCount === 0 && selectedMemberCount >= 1
         }
       />
       <CommandButton
         text="解除：ユニット"
-        hiddenFlg={
-          drawFlg || selectedUnitCount === 0 || selectedMemberCount > 0
-        }
+        showFlg={!drawFlg && selectedUnitCount > 0 && selectedMemberCount === 0}
       />
-      <CommandButton text="確認：控え室" hiddenFlg={drawFlg} />
-      <CommandButton text="転送：手牌" hiddenFlg={drawFlg} />
+      <CommandButton text="確認：控え室" showFlg={!drawFlg} />
+      <CommandButton text="転送：手牌" showFlg={!drawFlg} />
     </div>
     <div className="l-footer">
       <MyHandTileList />
