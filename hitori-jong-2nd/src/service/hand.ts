@@ -145,12 +145,25 @@ export const injectUnit = (hand: Hand, selectedMemberFlg: boolean[]): Hand => {
 };
 
 // ユニットを解除
-export const ejectUnit = (hand: Hand, selectedMemberFlg: boolean[]): Hand => {
-  // 選択されたユニットを取り出す
-  const newMember = hand.member.map(id => (selectedMemberFlg[id] ? id : 0));
+export const ejectUnit = (hand: Hand, selectedUnitFlg: boolean[]): Hand => {
+  const newUnit: number[] = [];
+  const newMember: number[] = [];
+
+  for (let ui = 0; ui < hand.unit.length; ui += 1) {
+    if (selectedUnitFlg[ui]) {
+      for (const member of UNIT_LIST2[hand.unit[ui]].member) {
+        newMember.push(member);
+      }
+    } else {
+      newUnit.push(hand.unit[ui]);
+    }
+  }
+  for (const member of hand.member) {
+    newMember.push(member);
+  }
 
   return {
-    unit: [...hand.unit],
+    unit: newUnit,
     member: newMember,
   };
 };
