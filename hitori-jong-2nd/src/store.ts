@@ -26,6 +26,7 @@ import {
   soraFunc,
 } from 'service/hand';
 import { setResetFlg, resetTrashArea, addTrashTile, getMemberFromTrashArea } from 'service/utility';
+import { UNIT_LIST2 } from 'constant2/unit';
 
 const useStore = (): ApplicationState => {
   // アプリケーションの動作モード
@@ -289,6 +290,11 @@ const useStore = (): ApplicationState => {
       // 選択した手牌のユニットを解除する
       case 'ejectUnit': {
         const myHand = getMyHand();
+        const selectedUnitId = myHand.unit[selectedMemberFlg.indexOf(true)];
+        if (applicationMode === 'Game' && UNIT_LIST2[selectedUnitId].chiFlg) {
+          // ゲーム画面で、かつチーしたユニットである際は解除できないようにする
+          break;
+        }
         setMyHand(ejectUnit(myHand, selectedUnitFlg));
         resetSelectedTileFlg();
         break;
