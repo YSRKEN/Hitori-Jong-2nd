@@ -4,7 +4,9 @@ import MyHandTileList from 'parts/MyHandTileList';
 import CommandButton from 'parts/CommandButton';
 import { countHand, hasSora } from 'service/hand';
 import { getResetFlg } from 'service/utility';
-import { HAND_TILE_COUNT } from 'constant/other';
+import { HAND_TILE_COUNT, TILE_COUNT } from 'constant/other';
+import { loadSetting } from 'service/setting';
+import { IDOL_LIST_COUNT } from 'constant/idol';
 
 // ゲーム画面
 const GameSceneBase: React.FC<{
@@ -53,10 +55,16 @@ const GameSceneBase: React.FC<{
       </button>
       <button
         type="button"
-        className="default-button reset-game"
+        className="l-margin-right default-button reset-game"
         onClick={resetGame}
       >
         リセット
+      </button>
+      <button
+        type="button"
+        className="default-button tile-count"
+      >
+        牌山残数：{IDOL_LIST_COUNT * TILE_COUNT - loadSetting('DeckPointer', 0)}
       </button>
     </div>
     <div className="l-main-game">

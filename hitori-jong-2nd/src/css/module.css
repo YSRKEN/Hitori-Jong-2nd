@@ -22,6 +22,14 @@
   padding: 1vh 2vh 1vh 2vh;
 }
 
+.tile-count {
+  background-color: white;
+  color: blue;
+  font-size: 5vh;
+  border-color: blue;
+  padding: 1vh 2vh 1vh 2vh;
+}
+
 .default-button {
   border-radius: 2vh;
 }
