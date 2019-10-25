@@ -94,7 +94,6 @@ const GameScene: React.FC = () => {
   const resetGame = () => {
     if (window.confirm('盤面をリセットしますか？')) {
       dispatch({ type: 'resetGame', message: '' });
-      dispatch({ type: 'drawTile', message: '' });
     }
   };
 
