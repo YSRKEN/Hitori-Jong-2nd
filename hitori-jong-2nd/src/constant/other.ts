@@ -35,3 +35,6 @@ export const TILE_COUNT = 3;
 
 // 参加者の人数
 export const PRODUCER_COUNT = 4;
+
+// 参加者ののうち、自分自身の番号
+export const USER_MEMBER_INDEX = 0;

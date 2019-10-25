@@ -14,6 +14,7 @@ const GameSceneBase: React.FC<{
   backToTitle: () => void;
   resetGame: () => void;
   drawTile: () => void;
+  trashTile: () => void;
 }> = ({
   drawFlg,
   soraFlg,
@@ -22,6 +23,7 @@ const GameSceneBase: React.FC<{
   backToTitle,
   resetGame,
   drawTile,
+  trashTile,
 }) => (
   <>
     <div className="l-header">
@@ -48,6 +50,7 @@ const GameSceneBase: React.FC<{
         showFlg={
           !drawFlg && selectedUnitCount === 0 && selectedMemberCount === 1
         }
+        onClick={trashTile}
       />
       <CommandButton
         text="交換"
@@ -106,6 +109,7 @@ const GameScene: React.FC = () => {
       backToTitle={() => dispatch({ type: 'BackToTitle', message: '' })}
       resetGame={resetGame}
       drawTile={() => dispatch({ type: 'drawTile', message: '' })}
+      trashTile={() => dispatch({ type: 'trashTile', message: '' })}
     />
   );
 };

@@ -17,6 +17,22 @@ export const drawTile = (hand: Hand, idolId: number): Hand => {
   };
 };
 
+// 牌を切る
+export const trashTile = (hand: Hand, memberIndex: number): Hand => {
+  const newMember: number[] = [];
+  for (let mi = 0; mi < hand.member.length; mi += 1) {
+    if (mi !== memberIndex) {
+      newMember.push(hand.member[mi]);
+    }
+  }
+  newMember.push(-1);
+
+  return {
+    unit: [...hand.unit],
+    member: newMember,
+  };
+};
+
 // 手牌をカウントする
 export const countHand = (hand: Hand) => {
   if (hand.member[hand.member.length - 1] < 0) {

@@ -8,12 +8,13 @@ import {
   HAND_TILE_COUNT,
   TILE_COUNT,
   PRODUCER_COUNT,
+  USER_MEMBER_INDEX,
 } from 'constant/other';
 import { Action } from 'constant/action';
 import { ApplicationState } from 'context';
 import { IDOL_LIST_COUNT } from 'constant/idol';
 import { shuffleDeck } from 'service/algorithm';
-import { createHandFromArray, drawTile } from 'service/hand';
+import { createHandFromArray, drawTile, trashTile } from 'service/hand';
 
 const useStore = (): ApplicationState => {
   // アプリケーションの動作モード
@@ -62,6 +63,25 @@ const useStore = (): ApplicationState => {
     saveSetting('OtherHand', hands);
   };
 
+  // 控え室
+  const [trashTileArea, setTrashTileArea] = useState(
+    loadSetting<number[][]>('TrashTileArea', []),
+  );
+  const setTrashTileArea2 = (trashArea: number[][]) => {
+    setTrashTileArea(trashArea);
+    saveSetting('TrashTileArea', trashArea);
+  };
+  const addTrashTile = (idolId: number, memberIndex: number) => {
+    // 控え室の状態を複製
+    const temp: number[][] = [];
+    for (const record of trashTileArea) {
+      temp.push([...record]);
+    }
+    // 控え室の状態を更新
+    temp[memberIndex] = [...temp[memberIndex], idolId];
+    setTrashTileArea2(temp);
+  };
+
   // 手牌の選択状態をリセットする
   const resetSelectedTileFlg = () => {
     const myHand = applicationMode === 'Game' ? myHandG : myHandS;
@@ -94,6 +114,14 @@ const useStore = (): ApplicationState => {
       }
     }
     setOtherHand2(otherHandtemp);
+
+    // 控え室の状態をリセットする
+    setTrashTileArea2([
+      Array<number>(),
+      Array<number>(),
+      Array<number>(),
+      Array<number>(),
+    ]);
 
     // 牌を配る
     setDeckPointer(HAND_TILE_COUNT * 4);
@@ -149,6 +177,16 @@ const useStore = (): ApplicationState => {
         setDeckPointer(deckPointer + 1);
         resetSelectedTileFlg();
         break;
+      // 牌を切る
+      case 'trashTile': {
+        // 自分の手牌を切る
+        const trashedTileIndex = selectedMemberFlg.indexOf(true);
+        const trashedMember = myHandG.member[trashedTileIndex];
+        setMyHandG2(trashTile(myHandG, trashedTileIndex));
+        addTrashTile(trashedMember, USER_MEMBER_INDEX);
+        resetSelectedTileFlg();
+        break;
+      }
       // 手牌のユニットをタップする
       case 'selectUnit': {
         const selectedIndex = parseInt(action.message, 10);

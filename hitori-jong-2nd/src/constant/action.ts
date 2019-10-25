@@ -4,6 +4,7 @@ export type ActionType =
   | 'BackToTitle'
   | 'resetGame'
   | 'drawTile'
+  | 'trashTile'
   | 'selectUnit'
   | 'selectMember';
 
