@@ -6,7 +6,8 @@ export interface ApplicationState {
   applicationMode: ApplicationMode;
   myHandG: Hand;
   myHandS: Hand;
-  selectedTileFlg: boolean[];
+  selectedUnitFlg: boolean[];
+  selectedMemberFlg: boolean[];
   dispatch: (action: Action) => void;
 }
 

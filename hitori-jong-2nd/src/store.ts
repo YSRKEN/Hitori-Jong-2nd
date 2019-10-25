@@ -8,13 +8,12 @@ import {
   HAND_TILE_COUNT,
   TILE_COUNT,
   PRODUCER_COUNT,
-  HAND_TILE_COUNT_PLUS,
 } from 'constant/other';
 import { Action } from 'constant/action';
 import { ApplicationState } from 'context';
 import { IDOL_LIST_COUNT } from 'constant/idol';
 import { shuffleDeck } from 'service/algorithm';
-import { createHandFromArray, drawTile, calcUnitToIndex, calcMemberToIndex } from 'service/hand';
+import { createHandFromArray, drawTile } from 'service/hand';
 
 const useStore = (): ApplicationState => {
   // アプリケーションの動作モード
@@ -38,8 +37,11 @@ const useStore = (): ApplicationState => {
   // シミュレーション画面における手牌
   const [myHandS] = useState(loadSetting('MyHandS', DEFAULT_HAND_S));
 
-  // 手牌の選択表示
-  const [selectedTileFlg, setSelectedTileFlg] = useState<boolean[]>([]);
+  // 手牌のユニットの選択表示
+  const [selectedUnitFlg, setSelectedUnitFlg] = useState<boolean[]>([]);
+
+  // 手牌のメンバーの選択表示
+  const [selectedMemberFlg, setSelectedMemberFlg] = useState<boolean[]>([]);
 
   // ゲーム画面における牌山
   const [tileDeck, setTileDeck] = useState(
@@ -54,12 +56,21 @@ const useStore = (): ApplicationState => {
   const [deckPointer, setDeckPointer] = useState(loadSetting('DeckPointer', 0));
 
   // 対戦相手の手牌(ゲーム画面用)
-  const [, setOtherHand] = useState(
-    loadSetting('OtherHand', Array<Hand>()),
-  );
+  const [, setOtherHand] = useState(loadSetting('OtherHand', Array<Hand>()));
   const setOtherHand2 = (hands: Hand[]) => {
     setOtherHand(hands);
     saveSetting('OtherHand', hands);
+  };
+
+  // 手牌の選択状態をリセットする
+  const resetSelectedTileFlg = () => {
+    const myHand = applicationMode === 'Game' ? myHandG : myHandS;
+    const temp = Array<boolean>(myHand.unit.length);
+    temp.fill(false);
+    setSelectedUnitFlg(temp);
+    const temp2 = Array<boolean>(myHand.member.length);
+    temp2.fill(false);
+    setSelectedMemberFlg(temp2);
   };
 
   // リセットとして、洗牌・配牌を行う
@@ -88,15 +99,12 @@ const useStore = (): ApplicationState => {
     setDeckPointer(HAND_TILE_COUNT * 4);
 
     // 選択状態もリセットする
-    const temp = Array<boolean>(HAND_TILE_COUNT_PLUS);
-    temp.fill(false);
-    setSelectedTileFlg(temp);
+    resetSelectedTileFlg();
   };
 
   useEffect(() => {
-    const temp = Array<boolean>(HAND_TILE_COUNT_PLUS);
-    temp.fill(false);
-    setSelectedTileFlg(temp);
+    resetSelectedTileFlg();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [applicationMode]);
 
   // アプリケーション開始時、牌山が初期化されていない時は初期化する
@@ -137,27 +145,23 @@ const useStore = (): ApplicationState => {
         break;
       // 牌をツモる
       case 'drawTile':
-          setMyHandG2(drawTile(myHandG, tileDeck[deckPointer]));
-          setDeckPointer(deckPointer + 1);
+        setMyHandG2(drawTile(myHandG, tileDeck[deckPointer]));
+        setDeckPointer(deckPointer + 1);
         break;
       // 手牌のユニットをタップする
-      case 'selectUnit':{
+      case 'selectUnit': {
         const selectedIndex = parseInt(action.message, 10);
-        const selectedRange = calcUnitToIndex(applicationMode === 'Game' ? myHandG : myHandS);
-        const temp = [...selectedTileFlg];
-        for (let ti = selectedRange[selectedIndex].begin; ti <  selectedRange[selectedIndex].end; ti += 1) {
-          temp[ti] = !temp[ti];
-        }
-        setSelectedTileFlg(temp);
+        const temp = [...selectedUnitFlg];
+        temp[selectedIndex] = !temp[selectedIndex];
+        setSelectedUnitFlg(temp);
         break;
       }
       // 手牌のメンバーをタップする
-      case 'selectMember':{
+      case 'selectMember': {
         const selectedIndex = parseInt(action.message, 10);
-        const selectedRange = calcMemberToIndex(applicationMode === 'Game' ? myHandG : myHandS);
-        const temp = [...selectedTileFlg];
-        temp[selectedRange[selectedIndex]] = !temp[selectedRange[selectedIndex]];
-        setSelectedTileFlg(temp);
+        const temp = [...selectedMemberFlg];
+        temp[selectedIndex] = !temp[selectedIndex];
+        setSelectedMemberFlg(temp);
         break;
       }
       default:
@@ -169,7 +173,8 @@ const useStore = (): ApplicationState => {
     applicationMode,
     myHandG,
     myHandS,
-    selectedTileFlg,
+    selectedUnitFlg,
+    selectedMemberFlg,
     dispatch,
   };
 };
