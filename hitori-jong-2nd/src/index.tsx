@@ -3,6 +3,7 @@ import ReactDOM from 'react-dom';
 import 'css/base.css';
 import 'css/layout.css';
 import 'css/module.css';
+import 'css/status.css';
 import App from './App';
 import * as serviceWorker from './serviceWorker';
 

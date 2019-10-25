@@ -3,7 +3,6 @@ import TitleScene from 'scene/Title';
 import GameScene from 'scene/Game';
 import SimulationScene from 'scene/Simulation';
 import useStore from 'store';
-import 'css/base.css';
 import { ApplicationContext } from 'context';
 
 const SceneSelector: React.FC = () => {

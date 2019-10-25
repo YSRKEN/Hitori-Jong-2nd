@@ -1,12 +1,28 @@
 import React, { useContext } from 'react';
 import { ApplicationContext } from 'context';
 import MyHandTileList from 'parts/MyHandTileList';
+import CommandButton from 'parts/CommandButton';
+import { countHand, hasSora } from 'service/hand';
+import { HAND_TILE_COUNT } from 'constant/other';
 
 // ゲーム画面
 const GameSceneBase: React.FC<{
+  drawFlg: boolean;
+  soraFlg: boolean;
+  selectedUnitCount: number;
+  selectedMemberCount: number;
   backToTitle: () => void;
   resetGame: () => void;
-}> = ({ backToTitle, resetGame }) => (
+  drawTile: () => void;
+}> = ({
+  drawFlg,
+  soraFlg,
+  selectedUnitCount,
+  selectedMemberCount,
+  backToTitle,
+  resetGame,
+  drawTile,
+}) => (
   <>
     <div className="l-header">
       <button
@@ -25,36 +41,46 @@ const GameSceneBase: React.FC<{
       </button>
     </div>
     <div className="l-main-game">
-      <button type="button" className="l-margin-right default-button command">
-        ツモ
-      </button>
-      <button type="button" className="l-margin-right default-button command">
-        使用：そら
-      </button>
-      <button type="button" className="l-margin-right default-button command">
-        打牌
-      </button>
-      <button type="button" className="l-margin-right default-button command">
-        交換
-      </button>
-      <button type="button" className="l-margin-right default-button command">
-        右シフト
-      </button>
-      <button type="button" className="l-margin-right default-button command">
-        左シフト
-      </button>
-      <button type="button" className="l-margin-right default-button command">
-        固定：ユニット
-      </button>
-      <button type="button" className="l-margin-right default-button command">
-        解除：ユニット
-      </button>
-      <button type="button" className="l-margin-right default-button command">
-        確認：控え室
-      </button>
-      <button type="button" className="l-margin-right default-button command">
-        転送：手牌
-      </button>
+      <CommandButton text="ツモ" hiddenFlg={!drawFlg} onClick={drawTile} />
+      <CommandButton text="使用：そら" hiddenFlg={!drawFlg || !soraFlg} />
+      <CommandButton
+        text="打牌"
+        hiddenFlg={
+          drawFlg || selectedUnitCount > 0 || selectedMemberCount !== 1
+        }
+      />
+      <CommandButton
+        text="交換"
+        hiddenFlg={
+          drawFlg || selectedUnitCount > 0 || selectedMemberCount !== 2
+        }
+      />
+      <CommandButton
+        text="右シフト"
+        hiddenFlg={
+          drawFlg || selectedUnitCount > 0 || selectedMemberCount === 0
+        }
+      />
+      <CommandButton
+        text="左シフト"
+        hiddenFlg={
+          drawFlg || selectedUnitCount > 0 || selectedMemberCount === 0
+        }
+      />
+      <CommandButton
+        text="固定：ユニット"
+        hiddenFlg={
+          drawFlg || selectedUnitCount > 0 || selectedMemberCount === 0
+        }
+      />
+      <CommandButton
+        text="解除：ユニット"
+        hiddenFlg={
+          drawFlg || selectedUnitCount === 0 || selectedMemberCount > 0
+        }
+      />
+      <CommandButton text="確認：控え室" hiddenFlg={drawFlg} />
+      <CommandButton text="転送：手牌" hiddenFlg={drawFlg} />
     </div>
     <div className="l-footer">
       <MyHandTileList />
@@ -63,7 +89,9 @@ const GameSceneBase: React.FC<{
 );
 
 const GameScene: React.FC = () => {
-  const { dispatch } = useContext(ApplicationContext);
+  const { myHandG, selectedUnitFlg, selectedMemberFlg, dispatch } = useContext(
+    ApplicationContext,
+  );
 
   const resetGame = () => {
     if (window.confirm('盤面をリセットしますか？')) {
@@ -74,8 +102,13 @@ const GameScene: React.FC = () => {
 
   return (
     <GameSceneBase
+      drawFlg={countHand(myHandG) === HAND_TILE_COUNT}
+      soraFlg={hasSora(myHandG)}
+      selectedUnitCount={selectedUnitFlg.filter(flg => flg).length}
+      selectedMemberCount={selectedMemberFlg.filter(flg => flg).length}
       backToTitle={() => dispatch({ type: 'BackToTitle', message: '' })}
       resetGame={resetGame}
+      drawTile={() => dispatch({ type: 'drawTile', message: '' })}
     />
   );
 };
