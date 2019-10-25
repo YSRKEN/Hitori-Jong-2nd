@@ -5,7 +5,7 @@ export const PROJECT_URL = 'https://github.com/YSRKEN/Hitori-Jong-2nd';
 export const README_URL =
   'https://github.com/YSRKEN/Hitori-Jong-2nd/wiki/取扱説明書';
 
-export type ApplicationMode = 'Title' | 'Game' | 'Simulation';
+export type ApplicationMode = 'Title' | 'Game' | 'Simulation' | 'Trash';
 
 export const KANA_LIST =
   'あいうえおかきくけこさしすせそたちつてとなにぬねのはひふへほまみむめもや　ゆ　よらりるれろわ　を　ん';
@@ -35,3 +35,9 @@ export const TILE_COUNT = 3;
 
 // 参加者の人数
 export const PRODUCER_COUNT = 4;
+
+// 参加者ののうち、自分自身の番号
+export const USER_MEMBER_INDEX = 0;
+
+// 参加者の名称
+export const USER_NAME_LIST = ['自分', '上家', '対面', '下家'];

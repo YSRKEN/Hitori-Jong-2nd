@@ -8,12 +8,24 @@ import {
   HAND_TILE_COUNT,
   TILE_COUNT,
   PRODUCER_COUNT,
+  USER_MEMBER_INDEX,
 } from 'constant/other';
 import { Action } from 'constant/action';
 import { ApplicationState } from 'context';
 import { IDOL_LIST_COUNT } from 'constant/idol';
 import { shuffleDeck } from 'service/algorithm';
-import { createHandFromArray, drawTile } from 'service/hand';
+import {
+  createHandFromArray,
+  drawTile,
+  trashTile,
+  shiftLeft,
+  shiftRight,
+  swapTile,
+  injectUnit,
+  ejectUnit,
+  soraFunc,
+} from 'service/hand';
+import { setResetFlg, resetTrashArea, addTrashTile, getMemberFromTrashArea } from 'service/utility';
 
 const useStore = (): ApplicationState => {
   // アプリケーションの動作モード
@@ -35,7 +47,13 @@ const useStore = (): ApplicationState => {
   };
 
   // シミュレーション画面における手牌
-  const [myHandS] = useState(loadSetting('MyHandS', DEFAULT_HAND_S));
+  const [myHandS, setMyHandS] = useState(
+    loadSetting('MyHandS', DEFAULT_HAND_S),
+  );
+  const setMyHandS2 = (hand: Hand) => {
+    setMyHandS(hand);
+    saveSetting('MyHandS', hand);
+  };
 
   // 手牌のユニットの選択表示
   const [selectedUnitFlg, setSelectedUnitFlg] = useState<boolean[]>([]);
@@ -52,19 +70,31 @@ const useStore = (): ApplicationState => {
     saveSetting('TileDeck', deck);
   };
 
-  // 牌山用のポインター
-  const [deckPointer, setDeckPointer] = useState(loadSetting('DeckPointer', 0));
-
   // 対戦相手の手牌(ゲーム画面用)
-  const [, setOtherHand] = useState(loadSetting('OtherHand', Array<Hand>()));
+  const [otherHand, setOtherHand] = useState(
+    loadSetting('OtherHand', Array<Hand>()),
+  );
   const setOtherHand2 = (hands: Hand[]) => {
     setOtherHand(hands);
     saveSetting('OtherHand', hands);
   };
 
+  // 早坂そらを使用したか？
+  const [useSoraFlg, setUseSoraFlg] = useState(false);
+
+  // 「現在の手牌」を返す
+  const getMyHand = () => {
+    return applicationMode === 'Game' ? myHandG : myHandS;
+  };
+
+  // 「現在の手牌」を更新する
+  const setMyHand = (hand: Hand) => {
+    return applicationMode === 'Game' ? setMyHandG2(hand) : setMyHandS2(hand);
+  };
+
   // 手牌の選択状態をリセットする
   const resetSelectedTileFlg = () => {
-    const myHand = applicationMode === 'Game' ? myHandG : myHandS;
+    const myHand = getMyHand();
     const temp = Array<boolean>(myHand.unit.length);
     temp.fill(false);
     setSelectedUnitFlg(temp);
@@ -75,6 +105,8 @@ const useStore = (): ApplicationState => {
 
   // リセットとして、洗牌・配牌を行う
   const resetGame = (tileDeckTemp?: number[]) => {
+    setResetFlg(false);
+
     let tileDeckTemp2 =
       typeof tileDeckTemp !== 'undefined' ? [...tileDeckTemp] : [...tileDeck];
     tileDeckTemp2 = shuffleDeck(tileDeckTemp2);
@@ -95,11 +127,29 @@ const useStore = (): ApplicationState => {
     }
     setOtherHand2(otherHandtemp);
 
+    // 控え室の状態をリセットする
+    resetTrashArea();
+
     // 牌を配る
-    setDeckPointer(HAND_TILE_COUNT * 4);
+    saveSetting('DeckPointer', HAND_TILE_COUNT * 4);
 
     // 選択状態もリセットする
     resetSelectedTileFlg();
+  };
+
+  // 牌山から牌を取る
+  const drawTileFromDeck = (): number => {
+    const deckPointer = loadSetting('DeckPointer', 0);
+
+    if (tileDeck.length > deckPointer) {
+      const tile = tileDeck[deckPointer];
+      saveSetting('DeckPointer', deckPointer + 1);
+
+      return tile;
+    }
+    setResetFlg(true);
+
+    return 0;
   };
 
   useEffect(() => {
@@ -139,16 +189,51 @@ const useStore = (): ApplicationState => {
       case 'BackToTitle':
         setApplicationMode2('Title');
         break;
+      // ゲーム画面に戻る
+      case 'BackToGame':
+        setApplicationMode2('Game');
+        break;
       // ゲーム状態をリセットする
       case 'resetGame':
         resetGame();
         break;
       // 牌をツモる
       case 'drawTile':
-        setMyHandG2(drawTile(myHandG, tileDeck[deckPointer]));
-        setDeckPointer(deckPointer + 1);
+        setMyHandG2(drawTile(myHandG, drawTileFromDeck()));
         resetSelectedTileFlg();
         break;
+      // 牌を切る
+      case 'trashTile': {
+        // 自分の手牌を切る
+        const trashedTileIndex = selectedMemberFlg.indexOf(true);
+        const trashedMember = myHandG.member[trashedTileIndex];
+        setMyHandG2(trashTile(myHandG, trashedTileIndex));
+        addTrashTile(trashedMember, USER_MEMBER_INDEX);
+        resetSelectedTileFlg();
+        break;
+      }
+      // 他家の操作(とりあえずツモ切りだけさせる)
+      case 'moveOtherProducer': {
+        // メンバーを特定
+        const memberIndex = parseInt(action.message, 10);
+
+        // 牌を引く
+        const enemyHand = otherHand[memberIndex];
+        const newEnemyHand = drawTile(enemyHand, drawTileFromDeck());
+
+        // 牌を捨てる
+        const trashedMember =
+          newEnemyHand.member[newEnemyHand.member.length - 1];
+        const newEnemyHand2 = trashTile(
+          newEnemyHand,
+          newEnemyHand.member.length - 1,
+        );
+        addTrashTile(trashedMember, memberIndex + 1);
+        const newOtherHand = [...otherHand];
+        newOtherHand[memberIndex] = newEnemyHand2;
+        setOtherHand2(newOtherHand);
+        break;
+      }
       // 手牌のユニットをタップする
       case 'selectUnit': {
         const selectedIndex = parseInt(action.message, 10);
@@ -163,6 +248,77 @@ const useStore = (): ApplicationState => {
         const temp = [...selectedMemberFlg];
         temp[selectedIndex] = !temp[selectedIndex];
         setSelectedMemberFlg(temp);
+        break;
+      }
+      // 選択した手牌のメンバーを左にシフトさせる
+      case 'shiftLeft': {
+        const myHand = getMyHand();
+        const { newHand, newSelectedMemberFlg } = shiftLeft(
+          myHand,
+          selectedMemberFlg,
+        );
+        setMyHand(newHand);
+        setSelectedMemberFlg(newSelectedMemberFlg);
+        break;
+      }
+      // 選択した手牌のメンバーを右にシフトさせる
+      case 'shiftRight': {
+        const myHand = getMyHand();
+        const { newHand, newSelectedMemberFlg } = shiftRight(
+          myHand,
+          selectedMemberFlg,
+        );
+        setMyHand(newHand);
+        setSelectedMemberFlg(newSelectedMemberFlg);
+        break;
+      }
+      // 選択した手牌のメンバーを交換する
+      case 'swapTile': {
+        const myHand = getMyHand();
+        setMyHand(swapTile(myHand, selectedMemberFlg));
+        resetSelectedTileFlg();
+        break;
+      }
+      // 選択した手牌でユニットを結成する
+      case 'injectUnit': {
+        const myHand = getMyHand();
+        setMyHand(injectUnit(myHand, selectedMemberFlg));
+        resetSelectedTileFlg();
+        break;
+      }
+      // 選択した手牌のユニットを解除する
+      case 'ejectUnit': {
+        const myHand = getMyHand();
+        setMyHand(ejectUnit(myHand, selectedUnitFlg));
+        resetSelectedTileFlg();
+        break;
+      }
+      // ゲーム画面→シミュレーション画面に手牌を転送する
+      case 'copyTile':
+        setMyHandS2({unit: [...myHandG.unit], member: [...myHandG.member]});
+        if (window.confirm('シミュレーション画面に遷移しますか？')) {
+          setApplicationMode2('Simulation');
+        }
+        break;
+      // 控え室を表示する
+      case 'showTrash':
+        setApplicationMode('Trash');
+        break;
+      // 早坂そらを使用する
+      case 'useSora':
+        setUseSoraFlg(true);
+        setApplicationMode('Trash');
+        break;
+      // 捨て牌を選択した際の動き
+      case 'selectTrash':{
+        if (useSoraFlg) {
+          const temp = action.message.split(',');
+          const idolId = parseInt(temp[0], 10);
+          const pId = parseInt(temp[1], 10);
+          setMyHandG2(soraFunc(myHandG, idolId));
+          getMemberFromTrashArea(pId, idolId);
+          setApplicationMode2('Game');
+        }
         break;
       }
       default:

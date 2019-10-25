@@ -4,6 +4,7 @@ import GameScene from 'scene/Game';
 import SimulationScene from 'scene/Simulation';
 import useStore from 'store';
 import { ApplicationContext } from 'context';
+import TrashScene from 'scene/Trash';
 
 const SceneSelector: React.FC = () => {
   const { applicationMode } = useContext(ApplicationContext);
@@ -15,6 +16,8 @@ const SceneSelector: React.FC = () => {
       return <GameScene />;
     case 'Simulation':
       return <SimulationScene />;
+    case 'Trash':
+      return <TrashScene />;
     default:
       return <></>;
   }
