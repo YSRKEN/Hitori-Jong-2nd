@@ -9,12 +9,13 @@ const SimulationSceneBase: React.FC<{
   selectedMemberCount: number;
   backToTitle: () => void;
   backToGame: () => void;
+  changeTile: () => void;
   swapTile: () => void;
   shiftLeft: () => void;
   shiftRight: () => void;
   injectUnit: () => void;
   ejectUnit: () => void;
-}> = ({ selectedUnitCount, selectedMemberCount, backToTitle, backToGame, swapTile, shiftLeft, shiftRight, injectUnit, ejectUnit }) => (
+}> = ({ selectedUnitCount, selectedMemberCount, backToTitle, backToGame, changeTile, swapTile, shiftLeft, shiftRight, injectUnit, ejectUnit }) => (
   <>
     <div className="l-header">
       <button
@@ -26,6 +27,11 @@ const SimulationSceneBase: React.FC<{
       </button>
     </div>
     <div className="l-main-simulation">
+      <CommandButton
+        text="変更"
+        showFlg={selectedUnitCount === 0 && selectedMemberCount === 1}
+        onClick={changeTile}
+      />
       <CommandButton
         text="交換"
         showFlg={selectedUnitCount === 0 && selectedMemberCount === 2}
@@ -54,7 +60,7 @@ const SimulationSceneBase: React.FC<{
       <CommandButton text="ユニット？" showFlg />
       <CommandButton text="受け入れ？" showFlg />
       <CommandButton text="何切る？" showFlg />
-      <CommandButton text="ゲーム画面に遷移" showFlg onClick={backToGame}/>
+      <CommandButton text="ゲーム画面に遷移" showFlg onClick={backToGame} />
     </div>
     <div className="l-footer">
       <MyHandTileList />
@@ -67,12 +73,19 @@ const SimulationScene: React.FC = () => {
     ApplicationContext,
   );
 
+  const changeTile = () => {
+    // どの牌が選択されているかを調べる
+    const selectedTileIndex = selectedMemberFlg.indexOf(true);
+    dispatch({ type: 'ToKanaKeyBoard', message: `${selectedTileIndex}` });
+  };
+
   return (
     <SimulationSceneBase
       selectedUnitCount={selectedUnitFlg.filter(flg => flg).length}
       selectedMemberCount={selectedMemberFlg.filter(flg => flg).length}
       backToTitle={() => dispatch({ type: 'BackToTitle', message: '' })}
       backToGame={() => dispatch({ type: 'BackToGame', message: '' })}
+      changeTile={changeTile}
       swapTile={() => dispatch({ type: 'swapTile', message: '' })}
       shiftLeft={() => dispatch({ type: 'shiftLeft', message: '' })}
       shiftRight={() => dispatch({ type: 'shiftRight', message: '' })}

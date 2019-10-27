@@ -3,7 +3,9 @@ export type ActionType =
   | 'TitleToSimulation'
   | 'BackToTitle'
   | 'BackToGame'
+  | 'BackToView'
   | 'resetGame'
+  | 'ToKanaKeyBoard'
   | 'drawTile'
   | 'trashTile'
   | 'selectUnit'
@@ -17,7 +19,9 @@ export type ActionType =
   | 'ejectUnit'
   | 'copyTile'
   | 'useSora'
-  | 'selectTrash';
+  | 'selectTrash'
+  | 'selectKana'
+  | 'selectIdol';
 
 export interface Action {
   type: ActionType;

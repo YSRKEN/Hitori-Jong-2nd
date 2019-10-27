@@ -24,6 +24,7 @@ import {
   injectUnit,
   ejectUnit,
   soraFunc,
+  selectIdolFunc,
 } from 'service/hand';
 import { setResetFlg, resetTrashArea, addTrashTile, getMemberFromTrashArea } from 'service/utility';
 import { UNIT_LIST2 } from 'constant2/unit';
@@ -82,6 +83,15 @@ const useStore = (): ApplicationState => {
 
   // 早坂そらを使用したか？
   const [useSoraFlg, setUseSoraFlg] = useState(false);
+
+  // 五十音表に移る前の画面
+  const [oldScene, setOldScene] = useState<ApplicationMode>('Game');
+
+  // 五十音表に移る前の選択位置
+  const [oldSelectedTileIndex, setOldSelectedTileIndex] = useState(-1);
+
+  // 五十音表で押したボタン
+  const [selectedKana, setSelectedKana] = useState('あ');
 
   // 「現在の手牌」を返す
   const getMyHand = () => {
@@ -194,9 +204,19 @@ const useStore = (): ApplicationState => {
       case 'BackToGame':
         setApplicationMode2('Game');
         break;
+      // 元の画面に戻る
+      case 'BackToView':
+        setApplicationMode2(oldScene);
+        break;
       // ゲーム状態をリセットする
       case 'resetGame':
         resetGame();
+        break;
+      // 五十音表画面に移る
+      case 'ToKanaKeyBoard':
+        setOldScene(applicationMode);
+        setOldSelectedTileIndex(parseInt(action.message, 10));
+        setApplicationMode('KanaKeyBoard');
         break;
       // 牌をツモる
       case 'drawTile':
@@ -327,6 +347,23 @@ const useStore = (): ApplicationState => {
         }
         break;
       }
+      // かな文字を選択
+      case 'selectKana': {
+        setSelectedKana(action.message);
+        setApplicationMode('IdolSelector');
+        break;
+      }
+      // アイドルを選択
+      case 'selectIdol':
+        if (oldSelectedTileIndex >= 0) {
+          // シミュレーション画面における手牌変化
+          setMyHandS2(selectIdolFunc(myHandS, oldSelectedTileIndex, parseInt(action.message)));
+          setApplicationMode(oldScene);
+        } else {
+          // ゲーム画面・シミュレーション画面における担当変化
+
+        }
+        break;
       default:
         break;
     }
@@ -338,6 +375,7 @@ const useStore = (): ApplicationState => {
     myHandS,
     selectedUnitFlg,
     selectedMemberFlg,
+    selectedKana,
     dispatch,
   };
 };

@@ -8,6 +8,7 @@ export interface ApplicationState {
   myHandS: Hand;
   selectedUnitFlg: boolean[];
   selectedMemberFlg: boolean[];
+  selectedKana: string;
   dispatch: (action: Action) => void;
 }
 

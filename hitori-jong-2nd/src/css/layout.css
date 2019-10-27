@@ -18,6 +18,11 @@
   margin-right: 5vh;
 }
 
+.l-main-idol-selector {
+  margin-top: 10vh;
+  margin-left: 10vh;
+}
+
 .l-margin-bottom {
   margin-bottom: 5vh;
 }
@@ -35,6 +40,10 @@
 .l-main-game {
   margin-left: 10vh;
   margin-top: 10vh;
+}
+
+.l-main-keyboard {
+  margin-top: 5vh;
 }
 
 .l-text-center {
