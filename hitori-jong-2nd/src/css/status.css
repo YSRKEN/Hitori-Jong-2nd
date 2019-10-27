@@ -1,3 +1,8 @@
 .is-display-none {
   display: none;
 }
+
+.is-key-disabled {
+  border-color: lightgray;
+  color: lightgray;
+}

@@ -343,6 +343,11 @@ const useStore = (): ApplicationState => {
         }
         break;
       }
+      // かな文字を選択
+      case 'selectKana': {
+        setApplicationMode('Simulation');
+        break;
+      }
       default:
         break;
     }

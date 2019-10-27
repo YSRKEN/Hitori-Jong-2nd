@@ -167,3 +167,21 @@
 .idol-tile-hidden {
   display: none;
 }
+
+.kana-keyboard {
+  border-spacing: 2vh;
+}
+
+.kana-key {
+  display: inline-block;
+  width: 12vh;
+  height: 12vh;
+  border-width: 2px;
+  border-color: black;
+  border-style: solid;
+  background-color: white;
+  font-size: 7vh;
+  font-weight: bold;
+  text-align: center;
+  line-height: 12vh;
+}
