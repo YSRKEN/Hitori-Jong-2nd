@@ -213,3 +213,24 @@ export const countHand = (hand: Hand) => {
 export const hasSora = (hand: Hand) => {
   return hand.member.includes(SORA_ID);
 };
+
+// その牌でチーした場合のユニット一覧を返す
+export const calcChiUnitList = (hand: Hand, addingIdolId: number): number[] => {
+  const memberSet = new Set(hand.member);
+  return UNIT_LIST2.filter(unitInfo => {
+    // ユニットは3枚以上か？(チーできるユニットか？)
+    if (!unitInfo.chiFlg) {
+      return false;
+    }
+    // 引き込んだ牌を使ったチーか？
+    if (!unitInfo.member.includes(addingIdolId)) {
+      return false;
+    }
+    // 残りの牌が手牌に全て含まれるか？
+    if (unitInfo.member.filter(id => id !== addingIdolId && !memberSet.has(id)).length > 0) {
+      return false;
+    } else {
+      return true;
+    }
+  }).map(unitInfo => unitInfo.id);
+};

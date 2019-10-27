@@ -14,15 +14,17 @@ const TrashSceneBase: React.FC<{
   for (let i = 0; i < PRODUCER_COUNT; i += 1) {
     const userName = USER_NAME_LIST[i];
     const domList2 = trashArea[i].map((id, index) => (
-      <IdolTile key={index} id={id} selectedFlg={false} onClick={() => selectTrash(id, i)} />
+      <IdolTile key={index + i * 100} id={id} selectedFlg={false} onClick={() => selectTrash(id, i)} />
     ));
     domList.push(
-      <>
+      <div key={i}>
         <span className="trash-title">{userName}の控え室：</span>
         <table className="tile-list l-margin-bottom">
-          <tr>{domList2}</tr>
+          <tbody>
+            <tr>{domList2}</tr>
+          </tbody>
         </table>
-      </>,
+      </div>,
     );
   }
 

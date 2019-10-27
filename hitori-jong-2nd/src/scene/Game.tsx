@@ -2,12 +2,14 @@ import React, { useContext } from 'react';
 import { ApplicationContext } from 'context';
 import MyHandTileList from 'parts/MyHandTileList';
 import CommandButton from 'parts/CommandButton';
-import { countHand, hasSora } from 'service/hand';
-import { getResetFlg } from 'service/utility';
-import { HAND_TILE_COUNT, TILE_COUNT } from 'constant/other';
+import { countHand, hasSora, calcChiUnitList } from 'service/hand';
+import { getResetFlg, getTrashArea } from 'service/utility';
+import { HAND_TILE_COUNT, TILE_COUNT, PRODUCER_COUNT } from 'constant/other';
 import { loadSetting } from 'service/setting';
 import { IDOL_LIST_COUNT } from 'constant/idol';
 import MyIdolView from 'parts/MyIdolView';
+import { IDOL_LIST2 } from 'constant2/idol';
+import { UNIT_LIST2 } from 'constant2/unit';
 
 // ゲーム画面
 const GameSceneBase: React.FC<{
@@ -136,32 +138,32 @@ const GameScene: React.FC = () => {
     }
   };
 
-  const trashTile = () => {
-    let resetFlg = false;
-    // eslint-disable-next-line no-constant-condition
-    while (true) {
-      dispatch({ type: 'trashTile', message: '' });
-      if (getResetFlg()) {
-        resetFlg = true;
-        break;
-      }
-      dispatch({ type: 'moveOtherProducer', message: '0' });
-      if (getResetFlg()) {
-        resetFlg = true;
-        break;
-      }
-      dispatch({ type: 'moveOtherProducer', message: '1' });
-      if (getResetFlg()) {
-        resetFlg = true;
-        break;
-      }
-      dispatch({ type: 'moveOtherProducer', message: '2' });
-      if (getResetFlg()) {
-        resetFlg = true;
-        break;
-      }
-      break;
+  const trashTileImpl = () => {
+    // 自分が手牌を捨てる
+    dispatch({ type: 'trashTile', message: '' });
+    if (getResetFlg()) {
+      return true;
     }
+
+    // 他家がツモリ、手牌を捨てる
+    for (let pi = 0; pi < PRODUCER_COUNT - 1; pi += 1){
+      dispatch({ type: 'moveOtherProducer', message: `${pi}` });
+      if (getResetFlg()) {
+        return true;
+      }
+
+      // 捨てられた手牌でチーできるかを確認
+      const temp = getTrashArea()[pi + 1];
+      const trashedTile = temp[temp.length - 1];
+      const chiList = calcChiUnitList(myHandG, trashedTile);
+      console.log(IDOL_LIST2[trashedTile].name);
+      console.log(chiList.map(id => `${UNIT_LIST2[id].name} ${UNIT_LIST2[id].member.map(id2 => IDOL_LIST2[id2].name)}`));
+    }
+    return false;
+  };
+
+  const trashTile = () => {
+    let resetFlg = trashTileImpl();
     if (resetFlg) {
       window.alert('牌山から牌を引ききりました。盤面をリセットします。');
       dispatch({ type: 'resetGame', message: '' });
