@@ -7,6 +7,7 @@ import { getResetFlg } from 'service/utility';
 import { HAND_TILE_COUNT, TILE_COUNT } from 'constant/other';
 import { loadSetting } from 'service/setting';
 import { IDOL_LIST_COUNT } from 'constant/idol';
+import MyIdolView from 'parts/MyIdolView';
 
 // ゲーム画面
 const GameSceneBase: React.FC<{
@@ -53,18 +54,19 @@ const GameSceneBase: React.FC<{
       >
         タイトルに戻る
       </button>
+      <MyIdolView />
       <button
         type="button"
-        className="l-margin-right default-button reset-game"
-        onClick={resetGame}
+        className="l-margin-right default-button tile-count"
       >
-        リセット
+        牌山残数：{IDOL_LIST_COUNT * TILE_COUNT - loadSetting('DeckPointer', 0)}
       </button>
       <button
         type="button"
-        className="default-button tile-count"
+        className="default-button reset-game"
+        onClick={resetGame}
       >
-        牌山残数：{IDOL_LIST_COUNT * TILE_COUNT - loadSetting('DeckPointer', 0)}
+        リセット
       </button>
     </div>
     <div className="l-main-game">

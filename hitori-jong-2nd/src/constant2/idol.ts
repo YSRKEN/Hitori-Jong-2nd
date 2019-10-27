@@ -25,3 +25,6 @@ export const IDOL_LIST2 = createIdolInfo2();
 export const SORA_ID = IDOL_LIST.findIndex(
   idolInfo => idolInfo.name === 'そら',
 );
+export const SHIIKA_ID = IDOL_LIST.findIndex(
+  idolInfo => idolInfo.name === '詩花',
+);

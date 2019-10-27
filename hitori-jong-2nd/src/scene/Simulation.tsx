@@ -2,6 +2,7 @@ import React, { useContext } from 'react';
 import { ApplicationContext } from 'context';
 import MyHandTileList from 'parts/MyHandTileList';
 import CommandButton from 'parts/CommandButton';
+import MyIdolView from 'parts/MyIdolView';
 
 // シミュレーション画面
 const SimulationSceneBase: React.FC<{
@@ -20,11 +21,12 @@ const SimulationSceneBase: React.FC<{
     <div className="l-header">
       <button
         type="button"
-        className="default-button back-title"
+        className="l-margin-right default-button back-title"
         onClick={backToTitle}
       >
         タイトルに戻る
       </button>
+      <MyIdolView />
     </div>
     <div className="l-main-simulation">
       <CommandButton

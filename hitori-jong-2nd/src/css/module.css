@@ -152,6 +152,24 @@
   border-spacing: 2vh;
 }
 
+.my-idol {
+  font-size: 5vh;
+  padding: 1vh 2vh 1vh 2vh;
+  background-color: white;
+}
+
+.my-idol-Princess {
+  background-color: pink;
+}
+
+.my-idol-Fairy {
+  background-color: lightblue;
+}
+
+.my-idol-Angel {
+  background-color: lemonchiffon;
+}
+
 .tile {
   padding-left: 0;
   padding-right: 0;

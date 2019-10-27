@@ -28,6 +28,7 @@ import {
 } from 'service/hand';
 import { setResetFlg, resetTrashArea, addTrashTile, getMemberFromTrashArea } from 'service/utility';
 import { UNIT_LIST2 } from 'constant2/unit';
+import { SORA_ID, SHIIKA_ID } from 'constant2/idol';
 
 const useStore = (): ApplicationState => {
   // アプリケーションの動作モード
@@ -92,6 +93,13 @@ const useStore = (): ApplicationState => {
 
   // 五十音表で押したボタン
   const [selectedKana, setSelectedKana] = useState('あ');
+
+  // 担当アイドル
+  const [myIdol, setMyIdol] = useState(loadSetting('MyIdol', 0));
+  const setMyIdol2 = (idolId: number) => {
+    setMyIdol(idolId);
+    saveSetting('MyIdol', idolId);
+  };
 
   // 「現在の手牌」を返す
   const getMyHand = () => {
@@ -354,16 +362,21 @@ const useStore = (): ApplicationState => {
         break;
       }
       // アイドルを選択
-      case 'selectIdol':
+      case 'selectIdol':{
+        const idolId = parseInt(action.message, 10);
         if (oldSelectedTileIndex >= 0) {
           // シミュレーション画面における手牌変化
-          setMyHandS2(selectIdolFunc(myHandS, oldSelectedTileIndex, parseInt(action.message)));
+          setMyHandS2(selectIdolFunc(myHandS, oldSelectedTileIndex, idolId));
           setApplicationMode(oldScene);
         } else {
           // ゲーム画面・シミュレーション画面における担当変化
-
+          if (idolId !== SORA_ID && idolId !== SHIIKA_ID){
+            setMyIdol2(idolId);
+          }
+          setApplicationMode(oldScene);
         }
         break;
+      }
       default:
         break;
     }
@@ -376,6 +389,7 @@ const useStore = (): ApplicationState => {
     selectedUnitFlg,
     selectedMemberFlg,
     selectedKana,
+    myIdol,
     dispatch,
   };
 };

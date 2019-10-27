@@ -9,6 +9,7 @@ export interface ApplicationState {
   selectedUnitFlg: boolean[];
   selectedMemberFlg: boolean[];
   selectedKana: string;
+  myIdol: number;
   dispatch: (action: Action) => void;
 }
 
