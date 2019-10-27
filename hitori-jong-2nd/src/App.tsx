@@ -1,10 +1,11 @@
 import React, { useContext } from 'react';
+import { ApplicationContext } from 'context';
+import useStore from 'store';
 import TitleScene from 'scene/Title';
 import GameScene from 'scene/Game';
 import SimulationScene from 'scene/Simulation';
-import useStore from 'store';
-import { ApplicationContext } from 'context';
 import TrashScene from 'scene/Trash';
+import KanaKeyBoard from 'scene/KanaKeyBoard';
 
 const SceneSelector: React.FC = () => {
   const { applicationMode } = useContext(ApplicationContext);
@@ -18,6 +19,8 @@ const SceneSelector: React.FC = () => {
       return <SimulationScene />;
     case 'Trash':
       return <TrashScene />;
+    case 'KanaKeyBoard':
+      return <KanaKeyBoard />;
     default:
       return <></>;
   }

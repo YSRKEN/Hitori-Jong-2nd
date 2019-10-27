@@ -83,6 +83,12 @@ const useStore = (): ApplicationState => {
   // 早坂そらを使用したか？
   const [useSoraFlg, setUseSoraFlg] = useState(false);
 
+  // 五十音表に移る前の画面
+  const [oldScene, setOldScene] = useState<ApplicationMode>('Game');
+
+  // 五十音表に移る前の選択位置
+  const [oldSelectedTileIndex, setOldSelectedTileIndex] = useState(-1);
+
   // 「現在の手牌」を返す
   const getMyHand = () => {
     return applicationMode === 'Game' ? myHandG : myHandS;
@@ -194,9 +200,19 @@ const useStore = (): ApplicationState => {
       case 'BackToGame':
         setApplicationMode2('Game');
         break;
+      // 元の画面に戻る
+      case 'BackToView':
+        setApplicationMode2(oldScene);
+        break;
       // ゲーム状態をリセットする
       case 'resetGame':
         resetGame();
+        break;
+      // 五十音表画面に移る
+      case 'ToKanaKeyBoard':
+        setOldScene(applicationMode);
+        setOldSelectedTileIndex(parseInt(action.message, 10));
+        setApplicationMode('KanaKeyBoard');
         break;
       // 牌をツモる
       case 'drawTile':
