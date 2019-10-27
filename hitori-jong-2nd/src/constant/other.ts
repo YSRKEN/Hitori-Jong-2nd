@@ -5,7 +5,7 @@ export const PROJECT_URL = 'https://github.com/YSRKEN/Hitori-Jong-2nd';
 export const README_URL =
   'https://github.com/YSRKEN/Hitori-Jong-2nd/wiki/取扱説明書';
 
-export type ApplicationMode = 'Title' | 'Game' | 'Simulation' | 'Trash' | 'KanaKeyBoard';
+export type ApplicationMode = 'Title' | 'Game' | 'Simulation' | 'Trash' | 'KanaKeyBoard' | 'IdolSelector';
 
 export const KANA_LIST =
   'あいうえおかきくけこさしすせそたちつてとなにぬねのはひふへほまみむめもや　ゆ　よらりるれろわ　を　ん';

@@ -8,6 +8,7 @@ interface KanaData {
 	disabled: boolean;
 };
 
+// キーボードのキー(かな)
 const KanaKey: React.FC<{
 	kanaData: KanaData;
 	selectKana: (kana: string) => void;
@@ -18,6 +19,7 @@ const KanaKey: React.FC<{
 }
 </>);
 
+// アイドル選択用のキーボード
 const KanaKeyBoardBase: React.FC<{
 	kanaList: KanaData[][];
 	selectKana: (kana: string) => void;

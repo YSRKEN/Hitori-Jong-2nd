@@ -148,6 +148,10 @@
   border-spacing: 1vh;
 }
 
+.idol-list {
+  border-spacing: 2vh;
+}
+
 .tile {
   padding-left: 0;
   padding-right: 0;

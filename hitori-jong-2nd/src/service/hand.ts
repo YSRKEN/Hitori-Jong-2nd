@@ -190,6 +190,16 @@ export const soraFunc = (hand: Hand, idolId: number): Hand => {
   };
 };
 
+// 指定した位置の手牌を指定した牌と入れ替える
+export const selectIdolFunc = (hand: Hand, memberIndex: number, idolId: number): Hand => {
+  const newMember = [...hand.member];
+  newMember[memberIndex] = idolId;
+  return {
+    unit: [...hand.unit],
+    member: newMember,
+  };
+}
+
 // 手牌をカウントする
 export const countHand = (hand: Hand) => {
   if (hand.member[hand.member.length - 1] < 0) {
