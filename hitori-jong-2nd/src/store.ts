@@ -34,6 +34,7 @@ import {
   addTrashTile,
   getMemberFromTrashArea,
   getTrashArea,
+  getMemberFromTrashAreaAsChi,
 } from 'service/utility';
 import { UNIT_LIST2 } from 'constant2/unit';
 import { SORA_ID, SHIIKA_ID, IDOL_LIST2 } from 'constant2/idol';
@@ -245,6 +246,7 @@ const useStore = (): ApplicationState => {
           )}でチーしますか？`;
           if (window.confirm(message)) {
             setMyHandG2(chiTile(myHandG, trashedTile, unitId));
+            getMemberFromTrashAreaAsChi(pi + 1);
 
             return;
           }
