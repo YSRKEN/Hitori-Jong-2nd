@@ -108,7 +108,7 @@ export const scoreResultToString = (scoreResult: ScoreResult) => {
   let output = '手役：\n';
   scoreResult.unit.forEach(unitId => {
     const unitInfo = UNIT_LIST2[unitId];
-    output += `・${unitInfo.name}`;
+    output += `・${unitInfo.score}点　${unitInfo.name}`;
     if (unitInfo.chiFlg) {
       output += '(チー)';
     }

@@ -434,10 +434,16 @@ export const calcScoreAndUnitForHand = (
       ? calcScoreAndUnit(freeMember)
       : calcScoreAndUnitWithMyIdol(freeMember, myIdolUnitSet);
 
-  return {
+  const temp: ScoreResult = {
     score:
       sum(hand.unit.map(unitId => UNIT_LIST2[unitId].score)) + result.score,
     unit: [...hand.unit, ...result.unit],
     myIdolFlg: myIdolFlg || result.myIdolFlg,
+  };
+
+  return {
+    score: scoreWithMyidol(temp),
+    unit: temp.unit,
+    myIdolFlg: temp.myIdolFlg,
   };
 };

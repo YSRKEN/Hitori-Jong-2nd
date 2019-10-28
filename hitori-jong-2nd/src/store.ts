@@ -32,7 +32,6 @@ import {
   countHand,
   calcChiUnitList,
   calcScoreAndUnitForHand,
-  handToString,
 } from 'service/hand';
 import {
   resetTrashArea,
@@ -257,6 +256,9 @@ const useStore = (): ApplicationState => {
           if (window.confirm(message)) {
             let message2 = `ミリオンライブ！(${ronResult.score % MILLION_SCORE}点)\n`;
             message2 += scoreResultToString(ronResult);
+            if (ronResult.myIdolFlg) {
+              message2 += '・2000点　担当ボーナス';
+            }
             window.alert(message2);
             window.alert('盤面をリセットします。');
             resetGame();
@@ -303,6 +305,9 @@ const useStore = (): ApplicationState => {
         if (window.confirm(message)) {
           let message2 = `ミリオンライブ！(${tsumoResult.score % MILLION_SCORE}点)\n`;
           message2 += scoreResultToString(tsumoResult);
+          if (tsumoResult.myIdolFlg) {
+            message2 += '・2000点　担当ボーナス';
+          }
           window.alert(message2);
           window.alert('盤面をリセットします。');
           resetGame();
