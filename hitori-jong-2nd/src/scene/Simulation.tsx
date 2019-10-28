@@ -16,7 +16,20 @@ const SimulationSceneBase: React.FC<{
   shiftRight: () => void;
   injectUnit: () => void;
   ejectUnit: () => void;
-}> = ({ selectedUnitCount, selectedMemberCount, backToTitle, backToGame, changeTile, swapTile, shiftLeft, shiftRight, injectUnit, ejectUnit }) => (
+  judgeUnit: () => void;
+}> = ({
+  selectedUnitCount,
+  selectedMemberCount,
+  backToTitle,
+  backToGame,
+  changeTile,
+  swapTile,
+  shiftLeft,
+  shiftRight,
+  injectUnit,
+  ejectUnit,
+  judgeUnit,
+}) => (
   <>
     <div className="l-header">
       <button
@@ -59,7 +72,7 @@ const SimulationSceneBase: React.FC<{
         showFlg={selectedUnitCount > 0 && selectedMemberCount === 0}
         onClick={ejectUnit}
       />
-      <CommandButton text="ユニット？" showFlg />
+      <CommandButton text="ユニット？" showFlg onClick={judgeUnit} />
       <CommandButton text="受け入れ？" showFlg />
       <CommandButton text="何切る？" showFlg />
       <CommandButton text="ゲーム画面に遷移" showFlg onClick={backToGame} />
@@ -93,6 +106,7 @@ const SimulationScene: React.FC = () => {
       shiftRight={() => dispatch({ type: 'shiftRight', message: '' })}
       injectUnit={() => dispatch({ type: 'injectUnit', message: '' })}
       ejectUnit={() => dispatch({ type: 'ejectUnit', message: '' })}
+      judgeUnit={() => dispatch({ type: 'judgeUnit', message: '' })}
     />
   );
 };

@@ -445,6 +445,15 @@ const useStore = (): ApplicationState => {
         }
         break;
       }
+      case 'judgeUnit':
+        console.log(
+          calcScoreAndUnitForHand(
+            myHandS,
+            myHandS.member[myHandS.member.length - 1],
+            myIdol,
+          ),
+        );
+        break;
       default:
         break;
     }

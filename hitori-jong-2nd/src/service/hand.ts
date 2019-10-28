@@ -310,11 +310,10 @@ const calcScoreAndUnit = (
   });
 
   // DFSにより、よりスコアが高い組を見つける
-  let maxScore = ZERO_SCORE;
+  let maxScore = preScore;
   for (const unit of filteredUnitList) {
     // 当該ユニットを取り去った後の手牌を算出する
     const freeMember2 = calcArrayDiff(freeMember, unit.member);
-
     // アガリ形だった場合の処理
     if (freeMember2.length === 0) {
       const result: ScoreResult = {
@@ -363,7 +362,7 @@ const calcScoreAndUnitWithMyIdol = (
   });
 
   // DFSにより、よりスコアが高い組を見つける
-  let maxScore = ZERO_SCORE;
+  let maxScore = preScore;
   for (const unit of filteredUnitList) {
     // 当該ユニットを取り去った後の手牌を算出する
     const freeMember2 = calcArrayDiff(freeMember, unit.member);
@@ -428,12 +427,10 @@ export const calcScoreAndUnitForHand = (
   // フリーな手牌と追加手牌とで最高得点の組み合わせを探す
   const freeMember = [...hand.member];
   freeMember[freeMember.length - 1] = addingIdolId;
-  if (!freeMember.includes(myIdol)) {
-    myIdolFlg = true;
-  }
-  const result = myIdolFlg
-    ? calcScoreAndUnit(freeMember)
-    : calcScoreAndUnitWithMyIdol(freeMember, myIdolUnitSet);
+  const result =
+    myIdolFlg || !freeMember.includes(myIdol)
+      ? calcScoreAndUnit(freeMember)
+      : calcScoreAndUnitWithMyIdol(freeMember, myIdolUnitSet);
 
   return {
     score:

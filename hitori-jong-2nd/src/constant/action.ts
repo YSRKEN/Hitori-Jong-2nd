@@ -21,7 +21,8 @@ export type ActionType =
   | 'useSora'
   | 'selectTrash'
   | 'selectKana'
-  | 'selectIdol';
+  | 'selectIdol'
+  | 'judgeUnit';
 
 export interface Action {
   type: ActionType;
