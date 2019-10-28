@@ -386,11 +386,21 @@ const useStore = (): ApplicationState => {
       // 選択した手牌のユニットを解除する
       case 'ejectUnit': {
         const myHand = getMyHand();
-        const selectedUnitId = myHand.unit[selectedUnitFlg.indexOf(true)];
-        if (applicationMode === 'Game' && UNIT_LIST2[selectedUnitId].chiFlg) {
-          // ゲーム画面で、かつチーしたユニットである際は解除できないようにする
-          break;
+        // ゲーム画面で、かつチーしたユニットである際は解除できないようにする
+        if (applicationMode === 'Game') {
+          let chiFlg = false;
+          for (let ui = 0; ui < selectedUnitFlg.length; ui += 1) {
+            if (UNIT_LIST2[myHand.unit[ui]].chiFlg && selectedUnitFlg[ui]) {
+              chiFlg = true;
+              break;
+            }
+          }
+          if (chiFlg) {
+            break;
+          }
         }
+        console.log(myHand);
+        console.log(ejectUnit(myHand, selectedUnitFlg));
         setMyHand(ejectUnit(myHand, selectedUnitFlg));
         resetSelectedTileFlg();
         break;
