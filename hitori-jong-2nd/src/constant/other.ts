@@ -50,3 +50,11 @@ export const USER_NAME_LIST = ['自分', '上家', '対面', '下家'];
 
 // 100万点(アガリ判定用の番兵)
 export const MILLION_SCORE = 1000000;
+
+// 計算結果を格納するための型
+export interface ScoreResult {
+  score: number;
+  unit: number[];
+  myIdolFlg: boolean;
+}
+export const ZERO_SCORE: ScoreResult = { score: 0, unit: [], myIdolFlg: false };

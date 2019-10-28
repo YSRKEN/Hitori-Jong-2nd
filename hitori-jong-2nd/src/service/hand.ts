@@ -1,10 +1,12 @@
-import { SORA_ID } from 'constant2/idol';
+import { SORA_ID, IDOL_LIST2 } from 'constant2/idol';
 import { UNIT_LIST2, UNIT_LIST2_WITHOUT_CHI } from 'constant2/unit';
 import {
   Hand,
   HAND_TILE_COUNT,
   HAND_TILE_COUNT_PLUS,
   MILLION_SCORE,
+  ScoreResult,
+  ZERO_SCORE,
 } from '../constant/other';
 import { sum, calcArrayDiff } from './utility';
 
@@ -20,7 +22,7 @@ export const createHandFromArray = (handArray: number[]): Hand => {
 export const drawTile = (hand: Hand, idolId: number): Hand => {
   return {
     unit: [...hand.unit],
-    member: [...hand.member.slice(0, HAND_TILE_COUNT), idolId],
+    member: [...hand.member.slice(0, hand.member.length - 1), idolId],
   };
 };
 
@@ -253,6 +255,14 @@ export const hasSora = (hand: Hand) => {
   return hand.member.includes(SORA_ID);
 };
 
+// 手牌を文字列化する
+export const handToString = (hand: Hand) => {
+  let output = `手牌枚数：${countHand(hand)}枚\n`;
+  output += `ユニット：${hand.unit.map(id => UNIT_LIST2[id].name + (UNIT_LIST2[id].chiFlg ? '(チー)' : ''))}\n`;
+  output += `残メンバー：${hand.member.map(id => id >= 0 ? IDOL_LIST2[id].name : '■')}`;
+  return output;
+}
+
 // その牌でチーした場合のユニット一覧を返す
 export const calcChiUnitList = (hand: Hand, addingIdolId: number): number[] => {
   const memberSet = new Set(hand.member);
@@ -277,14 +287,6 @@ export const calcChiUnitList = (hand: Hand, addingIdolId: number): number[] => {
     return true;
   }).map(unitInfo => unitInfo.id);
 };
-
-// 計算結果を格納するための型
-interface ScoreResult {
-  score: number;
-  unit: number[];
-  myIdolFlg: boolean;
-}
-const ZERO_SCORE: ScoreResult = { score: 0, unit: [], myIdolFlg: false };
 
 // 担当フラグを考慮したスコア計算
 const scoreWithMyidol = (scoreResult: ScoreResult) => {

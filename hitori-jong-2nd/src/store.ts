@@ -9,6 +9,9 @@ import {
   TILE_COUNT,
   PRODUCER_COUNT,
   USER_MEMBER_INDEX,
+  MILLION_SCORE,
+  USER_NAME_LIST,
+  HAND_TILE_COUNT_PLUS,
 } from 'constant/other';
 import { Action } from 'constant/action';
 import { ApplicationState } from 'context';
@@ -29,6 +32,7 @@ import {
   countHand,
   calcChiUnitList,
   calcScoreAndUnitForHand,
+  handToString,
 } from 'service/hand';
 import {
   resetTrashArea,
@@ -36,6 +40,7 @@ import {
   getMemberFromTrashArea,
   getTrashArea,
   getMemberFromTrashAreaAsChi,
+  scoreResultToString,
 } from 'service/utility';
 import { UNIT_LIST2 } from 'constant2/unit';
 import { SORA_ID, SHIIKA_ID, IDOL_LIST2 } from 'constant2/idol';
@@ -113,6 +118,9 @@ const useStore = (): ApplicationState => {
     setMyIdol(idolId);
     saveSetting('MyIdol', idolId);
   };
+
+  // このフラグが立った際はツモを確認する
+  const [tsumoCheckFlg, setTsumoCheckFlg] = useState(false);
 
   // 「現在の手牌」を返す
   const getMyHand = () => {
@@ -241,16 +249,25 @@ const useStore = (): ApplicationState => {
 
         // 捨てられた手牌でロンできるかを確認
         const ronResult = calcScoreAndUnitForHand(myHandG, trashedTile, myIdol);
-        console.log(
-          `${ronResult.score} ${ronResult.myIdolFlg} ${ronResult.unit.map(
-            id => UNIT_LIST2[id].name,
-          )}`,
-        );
+        if (ronResult.score >= MILLION_SCORE) {
+          let message = `${USER_NAME_LIST[pi + 1]}が捨てた\n`;
+          message += `打牌「${IDOL_LIST2[trashedTile].name}」に対し、\n`;
+          message += `ロン可能です(得点：${ronResult.score % MILLION_SCORE}点)。\n`;
+          message += `ロン上がりしますか？`;
+          if (window.confirm(message)) {
+            let message2 = `ミリオンライブ！(${ronResult.score % MILLION_SCORE}点)\n`;
+            message2 += scoreResultToString(ronResult);
+            window.alert(message2);
+            window.alert('盤面をリセットします。');
+            resetGame();
+          }
+        }
 
         // 捨てられた手牌でチーできるかを確認
         const chiList = calcChiUnitList(myHandG, trashedTile);
         for (const unitId of chiList) {
-          let message = `打牌「${IDOL_LIST2[trashedTile].name}」に対し、\n`;
+          let message = `${USER_NAME_LIST[pi + 1]}が捨てた\n`;
+          message += `打牌「${IDOL_LIST2[trashedTile].name}」に対し、\n`;
           message += `ユニット「${UNIT_LIST2[unitId].name}」でチー可能です。\n`;
           message += `${UNIT_LIST2[unitId].member.map(
             id => IDOL_LIST2[id].name,
@@ -276,6 +293,25 @@ const useStore = (): ApplicationState => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [resetFlg]);
 
+  // ツモアガリをチェック
+  useEffect(() => {
+    if (countHand(myHandG) === HAND_TILE_COUNT_PLUS) {
+      const tsumoResult = calcScoreAndUnitForHand(myHandG, myHandG.member[myHandG.member.length - 1], myIdol);
+      if (tsumoResult.score >= MILLION_SCORE) {
+        let message = `ツモアガリ可能です(得点：${tsumoResult.score % MILLION_SCORE}点)。\n`;
+        message += `ツモ上がりしますか？`;
+        if (window.confirm(message)) {
+          let message2 = `ミリオンライブ！(${tsumoResult.score % MILLION_SCORE}点)\n`;
+          message2 += scoreResultToString(tsumoResult);
+          window.alert(message2);
+          window.alert('盤面をリセットします。');
+          resetGame();
+        }
+      }
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [tsumoCheckFlg]);
+
   // dispatch
   const dispatch = (action: Action) => {
     switch (action.type) {
@@ -293,6 +329,7 @@ const useStore = (): ApplicationState => {
         break;
       // ゲーム画面に戻る
       case 'BackToGame':
+        setMyHandG2({ unit: [...myHandS.unit], member: [...myHandS.member] });
         setApplicationMode2('Game');
         break;
       // 元の画面に戻る
@@ -312,6 +349,7 @@ const useStore = (): ApplicationState => {
       // 牌をツモる
       case 'drawTile':
         setMyHandG2(drawTile(myHandG, drawTileFromDeck()));
+        setTsumoCheckFlg(true);
         resetSelectedTileFlg();
         break;
       // 牌を切る
@@ -399,8 +437,6 @@ const useStore = (): ApplicationState => {
             break;
           }
         }
-        console.log(myHand);
-        console.log(ejectUnit(myHand, selectedUnitFlg));
         setMyHand(ejectUnit(myHand, selectedUnitFlg));
         resetSelectedTileFlg();
         break;

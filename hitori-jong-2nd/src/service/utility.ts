@@ -1,5 +1,7 @@
 import { loadSetting, saveSetting } from 'service/setting';
-import { PRODUCER_COUNT } from 'constant/other';
+import { PRODUCER_COUNT, ScoreResult } from 'constant/other';
+import { UNIT_LIST2 } from 'constant2/unit';
+import { IDOL_LIST2 } from 'constant2/idol';
 
 // 控え室を初期化する
 export const resetTrashArea = () => {
@@ -100,3 +102,18 @@ export const calcArrayDiff = (a: number[], b: number[]) => {
 
   return result;
 };
+
+// スコアの計算結果を文字列化する
+export const scoreResultToString = (scoreResult: ScoreResult) => {
+  let output = '手役：\n';
+  scoreResult.unit.forEach(unitId => {
+    const unitInfo = UNIT_LIST2[unitId];
+    output += `・${unitInfo.name}`;
+    if (unitInfo.chiFlg) {
+      output += '(チー)';
+    }
+    output += `　${unitInfo.member.map(memberId => IDOL_LIST2[memberId].name)}`;
+    output += '\n';
+  })
+  return output;
+}
