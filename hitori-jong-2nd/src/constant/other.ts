@@ -5,7 +5,13 @@ export const PROJECT_URL = 'https://github.com/YSRKEN/Hitori-Jong-2nd';
 export const README_URL =
   'https://github.com/YSRKEN/Hitori-Jong-2nd/wiki/取扱説明書';
 
-export type ApplicationMode = 'Title' | 'Game' | 'Simulation' | 'Trash' | 'KanaKeyBoard' | 'IdolSelector';
+export type ApplicationMode =
+  | 'Title'
+  | 'Game'
+  | 'Simulation'
+  | 'Trash'
+  | 'KanaKeyBoard'
+  | 'IdolSelector';
 
 export const KANA_LIST =
   'あいうえおかきくけこさしすせそたちつてとなにぬねのはひふへほまみむめもや　ゆ　よらりるれろわ　を　ん';
@@ -41,3 +47,6 @@ export const USER_MEMBER_INDEX = 0;
 
 // 参加者の名称
 export const USER_NAME_LIST = ['自分', '上家', '対面', '下家'];
+
+// 100万点(アガリ判定用の番兵)
+export const MILLION_SCORE = 1000000;

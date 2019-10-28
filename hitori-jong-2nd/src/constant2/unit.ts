@@ -55,3 +55,6 @@ const createUnitInfo2 = () => {
 };
 
 export const UNIT_LIST2 = createUnitInfo2();
+export const UNIT_LIST2_WITHOUT_CHI = UNIT_LIST2.filter(
+  unit => unit.chiFlg === false,
+);

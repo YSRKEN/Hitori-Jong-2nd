@@ -1,6 +1,12 @@
 import { SORA_ID } from 'constant2/idol';
-import { UNIT_LIST2 } from 'constant2/unit';
-import { Hand, HAND_TILE_COUNT, HAND_TILE_COUNT_PLUS } from '../constant/other';
+import { UNIT_LIST2, UNIT_LIST2_WITHOUT_CHI } from 'constant2/unit';
+import {
+  Hand,
+  HAND_TILE_COUNT,
+  HAND_TILE_COUNT_PLUS,
+  MILLION_SCORE,
+} from '../constant/other';
+import { sum, calcArrayDiff } from './utility';
 
 // 数字の配列(12枚)を手牌としてあてがう
 export const createHandFromArray = (handArray: number[]): Hand => {
@@ -270,4 +276,169 @@ export const calcChiUnitList = (hand: Hand, addingIdolId: number): number[] => {
 
     return true;
   }).map(unitInfo => unitInfo.id);
+};
+
+// 計算結果を格納するための型
+interface ScoreResult {
+  score: number;
+  unit: number[];
+  myIdolFlg: boolean;
+}
+const ZERO_SCORE: ScoreResult = { score: 0, unit: [], myIdolFlg: false };
+
+// 担当フラグを考慮したスコア計算
+const scoreWithMyidol = (scoreResult: ScoreResult) => {
+  return scoreResult.myIdolFlg ? scoreResult.score + 2000 : scoreResult.score;
+};
+
+// 最高得点となるスコアとユニット一覧を返す(担当どうでもいい版)
+const calcScoreAndUnit = (
+  freeMember: number[],
+  unitList = UNIT_LIST2_WITHOUT_CHI,
+  preScore = ZERO_SCORE,
+): ScoreResult => {
+  // 適合するユニット一覧を抽出する
+  const freeMemberSet = new Set(freeMember);
+  const filteredUnitList = unitList.filter(unit => {
+    for (const member of unit.member) {
+      if (!freeMemberSet.has(member)) {
+        return false;
+      }
+    }
+
+    return true;
+  });
+
+  // DFSにより、よりスコアが高い組を見つける
+  let maxScore = ZERO_SCORE;
+  for (const unit of filteredUnitList) {
+    // 当該ユニットを取り去った後の手牌を算出する
+    const freeMember2 = calcArrayDiff(freeMember, unit.member);
+
+    // アガリ形だった場合の処理
+    if (freeMember2.length === 0) {
+      const result: ScoreResult = {
+        score: preScore.score + unit.score + MILLION_SCORE,
+        unit: [...preScore.unit, unit.id],
+        myIdolFlg: false,
+      };
+      if (maxScore.score < result.score) {
+        maxScore = result;
+      }
+    } else {
+      // アガリ形ではないので、1段深く検索するための準備を行う
+      const preScore2: ScoreResult = {
+        score: preScore.score + unit.score,
+        unit: [...preScore.unit, unit.id],
+        myIdolFlg: false,
+      };
+      // 検索する
+      const result = calcScoreAndUnit(freeMember2, filteredUnitList, preScore2);
+      if (maxScore.score < result.score) {
+        maxScore = result;
+      }
+    }
+  }
+
+  return maxScore;
+};
+
+// 最高得点となるスコアとユニット一覧を返す(担当気にする版)
+const calcScoreAndUnitWithMyIdol = (
+  freeMember: number[],
+  myIdolUnitSet: Set<number>,
+  unitList = UNIT_LIST2_WITHOUT_CHI,
+  preScore = ZERO_SCORE,
+): ScoreResult => {
+  // 適合するユニット一覧を抽出する
+  const freeMemberSet = new Set(freeMember);
+  const filteredUnitList = unitList.filter(unit => {
+    for (const member of unit.member) {
+      if (!freeMemberSet.has(member)) {
+        return false;
+      }
+    }
+
+    return true;
+  });
+
+  // DFSにより、よりスコアが高い組を見つける
+  let maxScore = ZERO_SCORE;
+  for (const unit of filteredUnitList) {
+    // 当該ユニットを取り去った後の手牌を算出する
+    const freeMember2 = calcArrayDiff(freeMember, unit.member);
+    const myIdolUnitFlg = myIdolUnitSet.has(unit.id);
+
+    // アガリ形だった場合の処理
+    if (freeMember2.length === 0) {
+      const result: ScoreResult = {
+        score: preScore.score + unit.score + MILLION_SCORE,
+        unit: [...preScore.unit, unit.id],
+        myIdolFlg: preScore.myIdolFlg || myIdolUnitFlg,
+      };
+      if (scoreWithMyidol(maxScore) < scoreWithMyidol(result)) {
+        maxScore = result;
+      }
+    } else {
+      // アガリ形ではないので、1段深く検索するための準備を行う
+      const preScore2: ScoreResult = {
+        score: preScore.score + unit.score,
+        unit: [...preScore.unit, unit.id],
+        myIdolFlg: preScore.myIdolFlg || myIdolUnitFlg,
+      };
+      // 検索する
+      const result = calcScoreAndUnitWithMyIdol(
+        freeMember2,
+        myIdolUnitSet,
+        filteredUnitList,
+        preScore2,
+      );
+      if (scoreWithMyidol(maxScore) < scoreWithMyidol(result)) {
+        maxScore = result;
+      }
+    }
+  }
+
+  return maxScore;
+};
+
+// その牌でツモ/ロンした場合のスコアとユニット一覧を返す
+// (アガリ形の場合、スコア＝score % 1000000となる)
+export const calcScoreAndUnitForHand = (
+  hand: Hand,
+  addingIdolId: number,
+  myIdol: number,
+): ScoreResult => {
+  // 担当が含まれるユニット一覧を取得する
+  const myIdolUnitSet = new Set(
+    UNIT_LIST2.filter(unit => unit.member.includes(myIdol)).map(
+      unit => unit.id,
+    ),
+  );
+
+  // 既存のユニットに担当が含まれるかを調べる
+  let myIdolFlg = false;
+  for (const unitId of hand.unit) {
+    if (myIdolUnitSet.has(unitId)) {
+      myIdolFlg = true;
+      break;
+    }
+  }
+
+  // フリーな手牌と追加手牌とで最高得点の組み合わせを探す
+  const freeMember = [...hand.member];
+  freeMember[freeMember.length - 1] = addingIdolId;
+  if (!freeMember.includes(myIdol)) {
+    myIdolFlg = true;
+  }
+  const result = myIdolFlg
+    ? calcScoreAndUnit(freeMember)
+    : calcScoreAndUnitWithMyIdol(freeMember, myIdolUnitSet);
+
+  return {
+    score:
+      sum(hand.unit.map(unitId => UNIT_LIST2[unitId].score)) + result.score,
+    unit: [...hand.unit, ...result.unit],
+    myIdolFlg: myIdolFlg || result.myIdolFlg,
+  };
 };

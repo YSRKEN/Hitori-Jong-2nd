@@ -28,6 +28,7 @@ import {
   chiTile,
   countHand,
   calcChiUnitList,
+  calcScoreAndUnitForHand,
 } from 'service/hand';
 import {
   resetTrashArea,
@@ -234,9 +235,19 @@ const useStore = (): ApplicationState => {
       for (let pi = 0; pi < PRODUCER_COUNT - 1; pi += 1) {
         moveOtherProducer(pi);
 
-        // 捨てられた手牌でチーできるかを確認
+        // 捨てられた手牌を確認する
         const temp = getTrashArea()[pi + 1];
         const trashedTile = temp[temp.length - 1];
+
+        // 捨てられた手牌でロンできるかを確認
+        const ronResult = calcScoreAndUnitForHand(myHandG, trashedTile, myIdol);
+        console.log(
+          `${ronResult.score} ${ronResult.myIdolFlg} ${ronResult.unit.map(
+            id => UNIT_LIST2[id].name,
+          )}`,
+        );
+
+        // 捨てられた手牌でチーできるかを確認
         const chiList = calcChiUnitList(myHandG, trashedTile);
         for (const unitId of chiList) {
           let message = `打牌「${IDOL_LIST2[trashedTile].name}」に対し、\n`;

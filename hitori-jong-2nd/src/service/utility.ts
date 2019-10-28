@@ -74,3 +74,29 @@ export const getMemberFromTrashArea = (pid: number, idolId: number) => {
   }
   saveSetting('TrashTileArea', temp);
 };
+
+// 要素の総和を求める
+export const sum = (a: number[]) => {
+  let output = 0;
+  for (const record of a) {
+    output += record;
+  }
+
+  return output;
+};
+
+// 要素の引き算を実施する
+export const calcArrayDiff = (a: number[], b: number[]) => {
+  const bSet = new Set<number>(b);
+  const temp = new Set<number>();
+  const result = new Array<number>();
+  for (const n of a) {
+    if (bSet.has(n) && !temp.has(n)) {
+      temp.add(n);
+      continue;
+    }
+    result.push(n);
+  }
+
+  return result;
+};
