@@ -25,8 +25,14 @@ import {
   ejectUnit,
   soraFunc,
   selectIdolFunc,
+  chiTile,
 } from 'service/hand';
-import { setResetFlg, resetTrashArea, addTrashTile, getMemberFromTrashArea } from 'service/utility';
+import {
+  setResetFlg,
+  resetTrashArea,
+  addTrashTile,
+  getMemberFromTrashArea,
+} from 'service/utility';
 import { UNIT_LIST2 } from 'constant2/unit';
 import { SORA_ID, SHIIKA_ID } from 'constant2/idol';
 
@@ -329,7 +335,7 @@ const useStore = (): ApplicationState => {
       }
       // ゲーム画面→シミュレーション画面に手牌を転送する
       case 'copyTile':
-        setMyHandS2({unit: [...myHandG.unit], member: [...myHandG.member]});
+        setMyHandS2({ unit: [...myHandG.unit], member: [...myHandG.member] });
         if (window.confirm('シミュレーション画面に遷移しますか？')) {
           setApplicationMode2('Simulation');
         }
@@ -344,7 +350,7 @@ const useStore = (): ApplicationState => {
         setApplicationMode('Trash');
         break;
       // 捨て牌を選択した際の動き
-      case 'selectTrash':{
+      case 'selectTrash': {
         if (useSoraFlg) {
           const temp = action.message.split(',');
           const idolId = parseInt(temp[0], 10);
@@ -362,7 +368,7 @@ const useStore = (): ApplicationState => {
         break;
       }
       // アイドルを選択
-      case 'selectIdol':{
+      case 'selectIdol': {
         const idolId = parseInt(action.message, 10);
         if (oldSelectedTileIndex >= 0) {
           // シミュレーション画面における手牌変化
@@ -370,11 +376,18 @@ const useStore = (): ApplicationState => {
           setApplicationMode(oldScene);
         } else {
           // ゲーム画面・シミュレーション画面における担当変化
-          if (idolId !== SORA_ID && idolId !== SHIIKA_ID){
+          if (idolId !== SORA_ID && idolId !== SHIIKA_ID) {
             setMyIdol2(idolId);
           }
           setApplicationMode(oldScene);
         }
+        break;
+      }
+      case 'chiTile': {
+        const temp = action.message.split(',');
+        const trashedTile = parseInt(temp[0], 10);
+        const unitId = parseInt(temp[1], 10);
+        setMyHandG2(chiTile(myHandG, trashedTile, unitId));
         break;
       }
       default:

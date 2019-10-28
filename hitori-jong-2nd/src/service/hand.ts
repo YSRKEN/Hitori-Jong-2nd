@@ -1,4 +1,4 @@
-import { SORA_ID } from 'constant2/idol';
+import { SORA_ID, IDOL_LIST2 } from 'constant2/idol';
 import { UNIT_LIST2 } from 'constant2/unit';
 import { Hand, HAND_TILE_COUNT, HAND_TILE_COUNT_PLUS } from '../constant/other';
 
@@ -175,15 +175,14 @@ export const soraFunc = (hand: Hand, idolId: number): Hand => {
   hand.member.forEach(id => {
     if (id !== SORA_ID) {
       newMember.push(id);
+    } else if (!soraFlg) {
+      soraFlg = true;
+      newMember.push(idolId);
     } else {
-      if (!soraFlg) {
-        soraFlg = true;
-        newMember.push(idolId);
-      } else {
-        newMember.push(id);
-      }
+      newMember.push(id);
     }
-  })
+  });
+
   return {
     unit: [...hand.unit],
     member: newMember,
@@ -191,14 +190,49 @@ export const soraFunc = (hand: Hand, idolId: number): Hand => {
 };
 
 // 指定した位置の手牌を指定した牌と入れ替える
-export const selectIdolFunc = (hand: Hand, memberIndex: number, idolId: number): Hand => {
+export const selectIdolFunc = (
+  hand: Hand,
+  memberIndex: number,
+  idolId: number,
+): Hand => {
   const newMember = [...hand.member];
   newMember[memberIndex] = idolId;
+
   return {
     unit: [...hand.unit],
     member: newMember,
   };
-}
+};
+
+// 指定した牌を引き込んで、指定したユニットでチーする
+export const chiTile = (
+  hand: Hand,
+  trashedTile: number,
+  unitId: number,
+): Hand => {
+  console.log(hand.member.map(id => IDOL_LIST2[id].name));
+  console.log(trashedTile);
+  console.log(unitId);
+  const temp = new Set<number>();
+  const newMember = Array<number>();
+  const unitMemberSet = new Set(UNIT_LIST2[unitId].member);
+  for (const member of hand.member) {
+    if (
+      member !== trashedTile &&
+      unitMemberSet.has(member) &&
+      !temp.has(member)
+    ) {
+      temp.add(member);
+      continue;
+    }
+    newMember.push(member);
+  }
+
+  return {
+    unit: [...hand.unit, unitId],
+    member: newMember,
+  };
+};
 
 // 手牌をカウントする
 export const countHand = (hand: Hand) => {
@@ -217,6 +251,7 @@ export const hasSora = (hand: Hand) => {
 // その牌でチーした場合のユニット一覧を返す
 export const calcChiUnitList = (hand: Hand, addingIdolId: number): number[] => {
   const memberSet = new Set(hand.member);
+
   return UNIT_LIST2.filter(unitInfo => {
     // ユニットは3枚以上か？(チーできるユニットか？)
     if (!unitInfo.chiFlg) {
@@ -227,10 +262,13 @@ export const calcChiUnitList = (hand: Hand, addingIdolId: number): number[] => {
       return false;
     }
     // 残りの牌が手牌に全て含まれるか？
-    if (unitInfo.member.filter(id => id !== addingIdolId && !memberSet.has(id)).length > 0) {
+    if (
+      unitInfo.member.filter(id => id !== addingIdolId && !memberSet.has(id))
+        .length > 0
+    ) {
       return false;
-    } else {
-      return true;
     }
+
+    return true;
   }).map(unitInfo => unitInfo.id);
 };

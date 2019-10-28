@@ -73,7 +73,11 @@ const GameSceneBase: React.FC<{
     </div>
     <div className="l-main-game">
       <CommandButton text="ツモ" showFlg={drawFlg} onClick={drawTile} />
-      <CommandButton text="使用：そら" showFlg={drawFlg && soraFlg} onClick={useSora} />
+      <CommandButton
+        text="使用：そら"
+        showFlg={drawFlg && soraFlg}
+        onClick={useSora}
+      />
       <CommandButton
         text="打牌"
         showFlg={
@@ -146,7 +150,7 @@ const GameScene: React.FC = () => {
     }
 
     // 他家がツモリ、手牌を捨てる
-    for (let pi = 0; pi < PRODUCER_COUNT - 1; pi += 1){
+    for (let pi = 0; pi < PRODUCER_COUNT - 1; pi += 1) {
       dispatch({ type: 'moveOtherProducer', message: `${pi}` });
       if (getResetFlg()) {
         return true;
@@ -156,14 +160,25 @@ const GameScene: React.FC = () => {
       const temp = getTrashArea()[pi + 1];
       const trashedTile = temp[temp.length - 1];
       const chiList = calcChiUnitList(myHandG, trashedTile);
-      console.log(IDOL_LIST2[trashedTile].name);
-      console.log(chiList.map(id => `${UNIT_LIST2[id].name} ${UNIT_LIST2[id].member.map(id2 => IDOL_LIST2[id2].name)}`));
+      for (const unitId of chiList) {
+        let message = `打牌「${IDOL_LIST2[trashedTile].name}」に対し、\n`;
+        message += `ユニット「${UNIT_LIST2[unitId].name}」でチー可能です。\n`;
+        message += `${UNIT_LIST2[unitId].member.map(
+          id => IDOL_LIST2[id].name,
+        )}でチーしますか？`;
+        if (window.confirm(message)) {
+          dispatch({ type: 'chiTile', message: `${trashedTile},${unitId}` });
+
+          return false;
+        }
+      }
     }
+
     return false;
   };
 
   const trashTile = () => {
-    let resetFlg = trashTileImpl();
+    const resetFlg = trashTileImpl();
     if (resetFlg) {
       window.alert('牌山から牌を引ききりました。盤面をリセットします。');
       dispatch({ type: 'resetGame', message: '' });
