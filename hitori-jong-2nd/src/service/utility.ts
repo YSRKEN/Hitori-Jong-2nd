@@ -1,18 +1,6 @@
 import { loadSetting, saveSetting } from 'service/setting';
 import { PRODUCER_COUNT } from 'constant/other';
 
-// リセット情報を取得する
-// (dispatchから例外を送出できないので苦肉の策)
-export const getResetFlg = () => {
-  return loadSetting('ResetFlg', false);
-};
-
-// リセット情報を書き込む
-// (dispatchから例外を送出できないので苦肉の策)
-export const setResetFlg = (resetFlg: boolean) => {
-  saveSetting('ResetFlg', resetFlg);
-};
-
 // 控え室を初期化する
 export const resetTrashArea = () => {
   saveSetting('TrashTileArea', [

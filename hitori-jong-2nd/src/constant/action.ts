@@ -21,8 +21,7 @@ export type ActionType =
   | 'useSora'
   | 'selectTrash'
   | 'selectKana'
-  | 'selectIdol'
-  | 'chiTile';
+  | 'selectIdol';
 
 export interface Action {
   type: ActionType;

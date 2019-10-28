@@ -1,4 +1,4 @@
-import { SORA_ID, IDOL_LIST2 } from 'constant2/idol';
+import { SORA_ID } from 'constant2/idol';
 import { UNIT_LIST2 } from 'constant2/unit';
 import { Hand, HAND_TILE_COUNT, HAND_TILE_COUNT_PLUS } from '../constant/other';
 
@@ -210,9 +210,6 @@ export const chiTile = (
   trashedTile: number,
   unitId: number,
 ): Hand => {
-  console.log(hand.member.map(id => IDOL_LIST2[id].name));
-  console.log(trashedTile);
-  console.log(unitId);
   const temp = new Set<number>();
   const newMember = Array<number>();
   const unitMemberSet = new Set(UNIT_LIST2[unitId].member);
@@ -225,7 +222,9 @@ export const chiTile = (
       temp.add(member);
       continue;
     }
-    newMember.push(member);
+    if (member >= 0) {
+      newMember.push(member);
+    }
   }
 
   return {

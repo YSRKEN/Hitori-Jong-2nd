@@ -2,14 +2,11 @@ import React, { useContext } from 'react';
 import { ApplicationContext } from 'context';
 import MyHandTileList from 'parts/MyHandTileList';
 import CommandButton from 'parts/CommandButton';
-import { countHand, hasSora, calcChiUnitList } from 'service/hand';
-import { getResetFlg, getTrashArea } from 'service/utility';
-import { HAND_TILE_COUNT, TILE_COUNT, PRODUCER_COUNT } from 'constant/other';
+import { countHand, hasSora } from 'service/hand';
+import { HAND_TILE_COUNT, TILE_COUNT } from 'constant/other';
 import { loadSetting } from 'service/setting';
 import { IDOL_LIST_COUNT } from 'constant/idol';
 import MyIdolView from 'parts/MyIdolView';
-import { IDOL_LIST2 } from 'constant2/idol';
-import { UNIT_LIST2 } from 'constant2/unit';
 
 // ゲーム画面
 const GameSceneBase: React.FC<{
@@ -142,49 +139,6 @@ const GameScene: React.FC = () => {
     }
   };
 
-  const trashTileImpl = () => {
-    // 自分が手牌を捨てる
-    dispatch({ type: 'trashTile', message: '' });
-    if (getResetFlg()) {
-      return true;
-    }
-
-    // 他家がツモリ、手牌を捨てる
-    for (let pi = 0; pi < PRODUCER_COUNT - 1; pi += 1) {
-      dispatch({ type: 'moveOtherProducer', message: `${pi}` });
-      if (getResetFlg()) {
-        return true;
-      }
-
-      // 捨てられた手牌でチーできるかを確認
-      const temp = getTrashArea()[pi + 1];
-      const trashedTile = temp[temp.length - 1];
-      const chiList = calcChiUnitList(myHandG, trashedTile);
-      for (const unitId of chiList) {
-        let message = `打牌「${IDOL_LIST2[trashedTile].name}」に対し、\n`;
-        message += `ユニット「${UNIT_LIST2[unitId].name}」でチー可能です。\n`;
-        message += `${UNIT_LIST2[unitId].member.map(
-          id => IDOL_LIST2[id].name,
-        )}でチーしますか？`;
-        if (window.confirm(message)) {
-          dispatch({ type: 'chiTile', message: `${trashedTile},${unitId}` });
-
-          return false;
-        }
-      }
-    }
-
-    return false;
-  };
-
-  const trashTile = () => {
-    const resetFlg = trashTileImpl();
-    if (resetFlg) {
-      window.alert('牌山から牌を引ききりました。盤面をリセットします。');
-      dispatch({ type: 'resetGame', message: '' });
-    }
-  };
-
   return (
     <GameSceneBase
       drawFlg={countHand(myHandG) === HAND_TILE_COUNT}
@@ -194,7 +148,7 @@ const GameScene: React.FC = () => {
       backToTitle={() => dispatch({ type: 'BackToTitle', message: '' })}
       resetGame={resetGame}
       drawTile={() => dispatch({ type: 'drawTile', message: '' })}
-      trashTile={trashTile}
+      trashTile={() => dispatch({ type: 'trashTile', message: '' })}
       shiftLeft={() => dispatch({ type: 'shiftLeft', message: '' })}
       shiftRight={() => dispatch({ type: 'shiftRight', message: '' })}
       swapTile={() => dispatch({ type: 'swapTile', message: '' })}

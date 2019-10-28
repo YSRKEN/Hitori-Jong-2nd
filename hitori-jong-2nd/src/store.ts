@@ -26,15 +26,17 @@ import {
   soraFunc,
   selectIdolFunc,
   chiTile,
+  countHand,
+  calcChiUnitList,
 } from 'service/hand';
 import {
-  setResetFlg,
   resetTrashArea,
   addTrashTile,
   getMemberFromTrashArea,
+  getTrashArea,
 } from 'service/utility';
 import { UNIT_LIST2 } from 'constant2/unit';
-import { SORA_ID, SHIIKA_ID } from 'constant2/idol';
+import { SORA_ID, SHIIKA_ID, IDOL_LIST2 } from 'constant2/idol';
 
 const useStore = (): ApplicationState => {
   // アプリケーションの動作モード
@@ -99,6 +101,9 @@ const useStore = (): ApplicationState => {
 
   // 五十音表で押したボタン
   const [selectedKana, setSelectedKana] = useState('あ');
+
+  // リセット情報
+  const [resetFlg, setResetFlg] = useState(false);
 
   // 担当アイドル
   const [myIdol, setMyIdol] = useState(loadSetting('MyIdol', 0));
@@ -177,6 +182,24 @@ const useStore = (): ApplicationState => {
     return 0;
   };
 
+  // 他家の操作
+  const moveOtherProducer = (memberIndex: number) => {
+    // 牌を引く
+    const enemyHand = otherHand[memberIndex];
+    const newEnemyHand = drawTile(enemyHand, drawTileFromDeck());
+
+    // 牌を捨てる
+    const trashedMember = newEnemyHand.member[newEnemyHand.member.length - 1];
+    const newEnemyHand2 = trashTile(
+      newEnemyHand,
+      newEnemyHand.member.length - 1,
+    );
+    addTrashTile(trashedMember, memberIndex + 1);
+    const newOtherHand = [...otherHand];
+    newOtherHand[memberIndex] = newEnemyHand2;
+    setOtherHand2(newOtherHand);
+  };
+
   useEffect(() => {
     resetSelectedTileFlg();
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -198,6 +221,47 @@ const useStore = (): ApplicationState => {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  // ゲーム画面で手牌が変更になった際の処理
+  useEffect(() => {
+    // 手牌が12枚になった際の処理
+    if (
+      countHand(myHandG) === HAND_TILE_COUNT &&
+      loadSetting('DeckPointer', 0) > HAND_TILE_COUNT * PRODUCER_COUNT
+    ) {
+      // 他家がツモリ、手牌を捨てる
+      for (let pi = 0; pi < PRODUCER_COUNT - 1; pi += 1) {
+        moveOtherProducer(pi);
+
+        // 捨てられた手牌でチーできるかを確認
+        const temp = getTrashArea()[pi + 1];
+        const trashedTile = temp[temp.length - 1];
+        const chiList = calcChiUnitList(myHandG, trashedTile);
+        for (const unitId of chiList) {
+          let message = `打牌「${IDOL_LIST2[trashedTile].name}」に対し、\n`;
+          message += `ユニット「${UNIT_LIST2[unitId].name}」でチー可能です。\n`;
+          message += `${UNIT_LIST2[unitId].member.map(
+            id => IDOL_LIST2[id].name,
+          )}でチーしますか？`;
+          if (window.confirm(message)) {
+            setMyHandG2(chiTile(myHandG, trashedTile, unitId));
+
+            return;
+          }
+        }
+      }
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [myHandG]);
+
+  // リセット処理
+  useEffect(() => {
+    if (resetFlg) {
+      window.alert('牌山から牌を引ききりました。盤面をリセットします。');
+      resetGame();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [resetFlg]);
 
   // dispatch
   const dispatch = (action: Action) => {
@@ -251,22 +315,7 @@ const useStore = (): ApplicationState => {
       case 'moveOtherProducer': {
         // メンバーを特定
         const memberIndex = parseInt(action.message, 10);
-
-        // 牌を引く
-        const enemyHand = otherHand[memberIndex];
-        const newEnemyHand = drawTile(enemyHand, drawTileFromDeck());
-
-        // 牌を捨てる
-        const trashedMember =
-          newEnemyHand.member[newEnemyHand.member.length - 1];
-        const newEnemyHand2 = trashTile(
-          newEnemyHand,
-          newEnemyHand.member.length - 1,
-        );
-        addTrashTile(trashedMember, memberIndex + 1);
-        const newOtherHand = [...otherHand];
-        newOtherHand[memberIndex] = newEnemyHand2;
-        setOtherHand2(newOtherHand);
+        moveOtherProducer(memberIndex);
         break;
       }
       // 手牌のユニットをタップする
@@ -324,7 +373,7 @@ const useStore = (): ApplicationState => {
       // 選択した手牌のユニットを解除する
       case 'ejectUnit': {
         const myHand = getMyHand();
-        const selectedUnitId = myHand.unit[selectedMemberFlg.indexOf(true)];
+        const selectedUnitId = myHand.unit[selectedUnitFlg.indexOf(true)];
         if (applicationMode === 'Game' && UNIT_LIST2[selectedUnitId].chiFlg) {
           // ゲーム画面で、かつチーしたユニットである際は解除できないようにする
           break;
@@ -381,13 +430,6 @@ const useStore = (): ApplicationState => {
           }
           setApplicationMode(oldScene);
         }
-        break;
-      }
-      case 'chiTile': {
-        const temp = action.message.split(',');
-        const trashedTile = parseInt(temp[0], 10);
-        const unitId = parseInt(temp[1], 10);
-        setMyHandG2(chiTile(myHandG, trashedTile, unitId));
         break;
       }
       default:
