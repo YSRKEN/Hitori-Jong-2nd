@@ -206,6 +206,18 @@
   font-weight: bold;
 }
 
+.ron-list {
+  display: block;
+  font-size: 7vh;
+  font-weight: bold;
+}
+
+.agari-info {
+  display: block;
+  font-size: 5vh;
+  font-weight: bold;
+}
+
 .unit-tile-chi {
   color: red;
   font-weight: bold;
