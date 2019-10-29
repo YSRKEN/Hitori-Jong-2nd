@@ -129,6 +129,9 @@ const useStore = (): ApplicationState => {
     unit2: number[];
   }>({ unit0: [], unit1: [], unit2: [] });
 
+  //　ユニット分析結果のフィルタリング
+  const [unitDataFilterFlg, setUnitDataFilterFlg] = useState(false);
+
   // 「現在の手牌」を返す
   const getMyHand = () => {
     return applicationMode === 'Game' ? myHandG : myHandS;
@@ -521,6 +524,9 @@ const useStore = (): ApplicationState => {
         setApplicationMode('UnitData');
         break;
       }
+      case 'changeUnitDataFilterFlg':
+        setUnitDataFilterFlg(pre => !pre);
+        break;
       default:
         break;
     }
@@ -535,6 +541,7 @@ const useStore = (): ApplicationState => {
     selectedKana,
     myIdol,
     unitData,
+    unitDataFilterFlg,
     dispatch,
   };
 };

@@ -6,7 +6,8 @@ import { IDOL_LIST2 } from 'constant2/idol';
 // 完成したユニットの情報
 const UnitView0: React.FC<{
   unitList: number[];
-}> = ({ unitList }) => (
+  unitDataFilterFlg: boolean;
+}> = ({ unitList, unitDataFilterFlg }) => (
   <table className="unit-list l-margin-bottom l-margin-top">
     <thead>
       <tr>
@@ -15,19 +16,21 @@ const UnitView0: React.FC<{
       </tr>
     </thead>
     <tbody>
-      {unitList.map((unitId, index) => {
-        const unitInfo = UNIT_LIST2[unitId];
-        const unitMember = unitInfo.member
-          .map(id => IDOL_LIST2[id].name)
-          .join('、');
+      {unitList
+        .filter(id => UNIT_LIST2[id].member.length >= 3 || !unitDataFilterFlg)
+        .map((unitId, index) => {
+          const unitInfo = UNIT_LIST2[unitId];
+          const unitMember = unitInfo.member
+            .map(id => IDOL_LIST2[id].name)
+            .join('、');
 
-        return (
-          <tr key={index}>
-            <td>{unitInfo.name}</td>
-            <td>{unitMember}</td>
-          </tr>
-        );
-      })}
+          return (
+            <tr key={index}>
+              <td>{unitInfo.name}</td>
+              <td>{unitMember}</td>
+            </tr>
+          );
+        })}
     </tbody>
   </table>
 );
@@ -36,7 +39,8 @@ const UnitView0: React.FC<{
 const UnitViewX: React.FC<{
   freeMember: number[];
   unitList: number[];
-}> = ({ freeMember, unitList }) => {
+  unitDataFilterFlg: boolean;
+}> = ({ freeMember, unitList, unitDataFilterFlg }) => {
   const freeMemberSet = new Set(freeMember);
 
   return (
@@ -49,25 +53,27 @@ const UnitViewX: React.FC<{
         </tr>
       </thead>
       <tbody>
-        {unitList.map((unitId, index) => {
-          const unitInfo = UNIT_LIST2[unitId];
-          const unitMember1 = unitInfo.member
-            .filter(id => !freeMemberSet.has(id))
-            .map(id => IDOL_LIST2[id].name)
-            .join('、');
-          const unitMember2 = unitInfo.member
-            .filter(id => freeMemberSet.has(id))
-            .map(id => IDOL_LIST2[id].name)
-            .join('、');
+        {unitList
+          .filter(id => UNIT_LIST2[id].member.length >= 3 || !unitDataFilterFlg)
+          .map((unitId, index) => {
+            const unitInfo = UNIT_LIST2[unitId];
+            const unitMember1 = unitInfo.member
+              .filter(id => !freeMemberSet.has(id))
+              .map(id => IDOL_LIST2[id].name)
+              .join('、');
+            const unitMember2 = unitInfo.member
+              .filter(id => freeMemberSet.has(id))
+              .map(id => IDOL_LIST2[id].name)
+              .join('、');
 
-          return (
-            <tr key={index}>
-              <td>{unitMember1}</td>
-              <td>{unitInfo.name}</td>
-              <td>{unitMember2}</td>
-            </tr>
-          );
-        })}
+            return (
+              <tr key={index}>
+                <td>{unitMember1}</td>
+                <td>{unitInfo.name}</td>
+                <td>{unitMember2}</td>
+              </tr>
+            );
+          })}
       </tbody>
     </table>
   );
@@ -77,8 +83,16 @@ const UnitViewX: React.FC<{
 const UnitDataSceneBase: React.FC<{
   freeMember: number[];
   unitData: { unit0: number[]; unit1: number[]; unit2: number[] };
+  unitDataFilterFlg: boolean;
   backToSimulation: () => void;
-}> = ({ freeMember, unitData, backToSimulation }) => (
+  changeUnitDataFilterFlg: () => void;
+}> = ({
+  freeMember,
+  unitData,
+  unitDataFilterFlg,
+  backToSimulation,
+  changeUnitDataFilterFlg,
+}) => (
   <>
     <div className="l-header">
       <button
@@ -88,28 +102,52 @@ const UnitDataSceneBase: React.FC<{
       >
         シミュレーション画面に戻る
       </button>
+      <input
+        type="checkbox"
+        checked={unitDataFilterFlg}
+        onChange={changeUnitDataFilterFlg}
+      />
+      3人以上のユニットに絞る
     </div>
     <div className="l-main-unitdata">
       <span className="unit-title">完成したユニット：</span>
-      <UnitView0 unitList={unitData.unit0} />
+      <UnitView0
+        unitList={unitData.unit0}
+        unitDataFilterFlg={unitDataFilterFlg}
+      />
       <span className="unit-title">あと1枚で完成するユニット：</span>
-      <UnitViewX freeMember={freeMember} unitList={unitData.unit1} />
+      <UnitViewX
+        freeMember={freeMember}
+        unitList={unitData.unit1}
+        unitDataFilterFlg={unitDataFilterFlg}
+      />
       <span className="unit-title">あと2枚で完成するユニット：</span>
-      <UnitViewX freeMember={freeMember} unitList={unitData.unit2} />
+      <UnitViewX
+        freeMember={freeMember}
+        unitList={unitData.unit2}
+        unitDataFilterFlg={unitDataFilterFlg}
+      />
     </div>
   </>
 );
 
 const UnitDataScene: React.FC = () => {
-  const { myHandS, unitData, dispatch } = useContext(ApplicationContext);
+  const { myHandS, unitData, unitDataFilterFlg, dispatch } = useContext(
+    ApplicationContext,
+  );
+
+  const changeUnitDataFilterFlg = () =>
+    dispatch({ type: 'changeUnitDataFilterFlg', message: '' });
 
   return (
     <UnitDataSceneBase
       freeMember={myHandS.member.filter(id => id >= 0)}
       unitData={unitData}
+      unitDataFilterFlg={unitDataFilterFlg}
       backToSimulation={() =>
         dispatch({ type: 'BackToSimulation', message: '' })
       }
+      changeUnitDataFilterFlg={changeUnitDataFilterFlg}
     />
   );
 };

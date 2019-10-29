@@ -11,6 +11,7 @@ export interface ApplicationState {
   selectedKana: string;
   myIdol: number;
   unitData: { unit0: number[]; unit1: number[]; unit2: number[] };
+  unitDataFilterFlg: boolean;
   dispatch: (action: Action) => void;
 }
 

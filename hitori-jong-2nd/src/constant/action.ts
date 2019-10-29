@@ -23,7 +23,8 @@ export type ActionType =
   | 'selectTrash'
   | 'selectKana'
   | 'selectIdol'
-  | 'judgeUnit';
+  | 'judgeUnit'
+  | 'changeUnitDataFilterFlg';
 
 export interface Action {
   type: ActionType;
