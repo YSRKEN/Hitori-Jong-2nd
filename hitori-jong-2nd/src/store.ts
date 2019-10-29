@@ -12,6 +12,7 @@ import {
   MILLION_SCORE,
   USER_NAME_LIST,
   HAND_TILE_COUNT_PLUS,
+  ScoreResult,
 } from 'constant/other';
 import { Action } from 'constant/action';
 import { ApplicationState } from 'context';
@@ -132,6 +133,18 @@ const useStore = (): ApplicationState => {
 
   //　ユニット分析結果のフィルタリング
   const [unitDataFilterFlg, setUnitDataFilterFlg] = useState(false);
+
+  // 受け入れ分析結果
+  const [wantedIdolData, setWantedIdolData] = useState<{
+    agari: {
+      idol: number;
+      result: ScoreResult;
+    }[];
+    chi: {
+      idol: number;
+      unit: number;
+    }[];
+  }>({ agari: [], chi: [] });
 
   // 「現在の手牌」を返す
   const getMyHand = () => {
@@ -533,7 +546,8 @@ const useStore = (): ApplicationState => {
       // 受け入れ分析
       case 'judgeWantedIdol': {
         const result = calcWantedIdol(myHandS, myIdol);
-        console.log(result);
+        setWantedIdolData(result);
+        setApplicationMode('WantedIdol');
         break;
       }
       default:
@@ -551,6 +565,7 @@ const useStore = (): ApplicationState => {
     myIdol,
     unitData,
     unitDataFilterFlg,
+    wantedIdolData,
     dispatch,
   };
 };
