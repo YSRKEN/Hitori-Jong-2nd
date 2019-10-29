@@ -32,6 +32,7 @@ import {
   countHand,
   calcChiUnitList,
   calcScoreAndUnitForHand,
+  calcUnitData,
 } from 'service/hand';
 import {
   resetTrashArea,
@@ -251,10 +252,12 @@ const useStore = (): ApplicationState => {
         if (ronResult.score >= MILLION_SCORE) {
           let message = `${USER_NAME_LIST[pi + 1]}が捨てた\n`;
           message += `打牌「${IDOL_LIST2[trashedTile].name}」に対し、\n`;
-          message += `ロン可能です(得点：${ronResult.score % MILLION_SCORE}点)。\n`;
-          message += `ロン上がりしますか？`;
+          message += `ロン可能です(得点：${ronResult.score %
+            MILLION_SCORE}点)。\n`;
+          message += 'ロン上がりしますか？';
           if (window.confirm(message)) {
-            let message2 = `ミリオンライブ！(${ronResult.score % MILLION_SCORE}点)\n`;
+            let message2 = `ミリオンライブ！(${ronResult.score %
+              MILLION_SCORE}点)\n`;
             message2 += scoreResultToString(ronResult);
             if (ronResult.myIdolFlg) {
               message2 += '・2000点　担当ボーナス';
@@ -298,12 +301,18 @@ const useStore = (): ApplicationState => {
   // ツモアガリをチェック
   useEffect(() => {
     if (countHand(myHandG) === HAND_TILE_COUNT_PLUS) {
-      const tsumoResult = calcScoreAndUnitForHand(myHandG, myHandG.member[myHandG.member.length - 1], myIdol);
+      const tsumoResult = calcScoreAndUnitForHand(
+        myHandG,
+        myHandG.member[myHandG.member.length - 1],
+        myIdol,
+      );
       if (tsumoResult.score >= MILLION_SCORE) {
-        let message = `ツモアガリ可能です(得点：${tsumoResult.score % MILLION_SCORE}点)。\n`;
-        message += `ツモ上がりしますか？`;
+        let message = `ツモアガリ可能です(得点：${tsumoResult.score %
+          MILLION_SCORE}点)。\n`;
+        message += 'ツモ上がりしますか？';
         if (window.confirm(message)) {
-          let message2 = `ミリオンライブ！(${tsumoResult.score % MILLION_SCORE}点)\n`;
+          let message2 = `ミリオンライブ！(${tsumoResult.score %
+            MILLION_SCORE}点)\n`;
           message2 += scoreResultToString(tsumoResult);
           if (tsumoResult.myIdolFlg) {
             message2 += '・2000点　担当ボーナス';
@@ -496,15 +505,16 @@ const useStore = (): ApplicationState => {
         }
         break;
       }
-      case 'judgeUnit':
-        console.log(
-          calcScoreAndUnitForHand(
-            myHandS,
-            myHandS.member[myHandS.member.length - 1],
-            myIdol,
-          ),
-        );
+      case 'judgeUnit': {
+        const result = calcUnitData(myHandS);
+        console.log('揃っているユニット：');
+        console.log(result.unit0.map(id => UNIT_LIST2[id].name));
+        console.log('後1枚のユニット：');
+        console.log(result.unit1.map(id => UNIT_LIST2[id].name));
+        console.log('後2枚のユニット：');
+        console.log(result.unit2.map(id => UNIT_LIST2[id].name));
         break;
+      }
       default:
         break;
     }

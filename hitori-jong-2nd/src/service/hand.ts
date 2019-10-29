@@ -258,10 +258,15 @@ export const hasSora = (hand: Hand) => {
 // 手牌を文字列化する
 export const handToString = (hand: Hand) => {
   let output = `手牌枚数：${countHand(hand)}枚\n`;
-  output += `ユニット：${hand.unit.map(id => UNIT_LIST2[id].name + (UNIT_LIST2[id].chiFlg ? '(チー)' : ''))}\n`;
-  output += `残メンバー：${hand.member.map(id => id >= 0 ? IDOL_LIST2[id].name : '■')}`;
+  output += `ユニット：${hand.unit.map(
+    id => UNIT_LIST2[id].name + (UNIT_LIST2[id].chiFlg ? '(チー)' : ''),
+  )}\n`;
+  output += `残メンバー：${hand.member.map(id =>
+    id >= 0 ? IDOL_LIST2[id].name : '■',
+  )}`;
+
   return output;
-}
+};
 
 // その牌でチーした場合のユニット一覧を返す
 export const calcChiUnitList = (hand: Hand, addingIdolId: number): number[] => {
@@ -446,4 +451,45 @@ export const calcScoreAndUnitForHand = (
     unit: temp.unit,
     myIdolFlg: temp.myIdolFlg,
   };
+};
+
+// ユニットについての情報を取得する
+export const calcUnitData = (
+  hand: Hand,
+): { unit0: number[]; unit1: number[]; unit2: number[] } => {
+  const memberSet = new Set(hand.member.filter(id => id >= 0));
+
+  // 全て揃っているユニット、1枚だけ足りないユニット、2枚足りないユニットについての情報を記録する
+  const unit0: number[] = [];
+  const unit1: number[] = [];
+  const unit2: number[] = [];
+  UNIT_LIST2_WITHOUT_CHI.forEach(unitInfo => {
+    const wantedMember = unitInfo.member.filter(id => !memberSet.has(id));
+    switch (wantedMember.length) {
+      case 0:
+        unit0.push(unitInfo.id);
+        break;
+      case 1:
+        unit1.push(unitInfo.id);
+        break;
+      case 2:
+        unit2.push(unitInfo.id);
+        break;
+      default:
+        break;
+    }
+  });
+
+  // それぞれについて、元のメンバーの人数によって並び替えを実施
+  unit0.sort(
+    (a, b) => UNIT_LIST2[b].member.length - UNIT_LIST2[a].member.length,
+  );
+  unit1.sort(
+    (a, b) => UNIT_LIST2[b].member.length - UNIT_LIST2[a].member.length,
+  );
+  unit2.sort(
+    (a, b) => UNIT_LIST2[b].member.length - UNIT_LIST2[a].member.length,
+  );
+
+  return { unit0, unit1, unit2 };
 };
