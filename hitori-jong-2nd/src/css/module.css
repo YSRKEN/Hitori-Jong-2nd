@@ -1,0 +1,251 @@
+.link {
+  font-size: 5vh;
+}
+
+.application-title {
+  font-size: 20vh;
+}
+
+.application-version {
+  font-size: 10vh;
+}
+
+.back-title {
+  font-size: 5vh;
+  padding: 1vh 2vh 1vh 2vh;
+}
+
+.reset-game {
+  background-color: red;
+  font-size: 5vh;
+  font-weight: bold;
+  padding: 1vh 2vh 1vh 2vh;
+}
+
+.tile-count {
+  background-color: white;
+  border-color: blue;
+  color: blue;
+  font-size: 5vh;
+  padding: 1vh 2vh 1vh 2vh;
+}
+
+.default-button {
+  border-radius: 2vh;
+}
+
+.command {
+  background-color: lightgreen;
+  font-size: 5vh;
+  padding: 1vh 2vh 1vh 2vh;
+}
+
+.top-menu {
+  font-size: 7vh;
+  padding: 2vh 3vh 2vh 3vh;
+}
+
+.top-menu-game {
+  background-color: orange;
+}
+
+.top-menu-simulation {
+  background-color: greenyellow;
+}
+
+.top-menu-share {
+  background-color: #00aced;
+  display: inline-block;
+  border-color: black;
+  border-width: 1px;
+  border-style: solid;
+  white-space: nowrap;
+}
+
+.unit-tile {
+  font-size: 5vh;
+  height: 24vh;
+  white-space: normal;
+}
+
+.unit-tile.is-selected {
+  border-width: 2px !important;
+  font-weight: bold;
+}
+
+.unit-tile-width-1 {
+  width: 11vh;
+}
+
+.unit-tile-width-2 {
+  width: calc(11vh * 2 + 1vh);
+}
+
+.unit-tile-width-3 {
+  width: calc(11vh * 3 + 1vh * 2);
+}
+
+.unit-tile-width-4 {
+  width: calc(11vh * 4 + 1vh * 3);
+}
+
+.unit-tile-width-5 {
+  width: calc(11vh * 5 + 1vh * 4);
+}
+
+.unit-tile-width-6 {
+  width: calc(11vh * 6 + 1vh * 5);
+}
+
+.unit-tile-width-7 {
+  width: calc(11vh * 7 + 1vh * 6);
+}
+
+.unit-tile-width-13 {
+  width: calc(11vh * 13 + 1vh * 12);
+}
+
+.idol-tile {
+  height: 24vh;
+  white-space: unset;
+  width: 11vh;
+  -webkit-writing-mode: vertical-rl;
+  -ms-writing-mode: tb-rl;
+  writing-mode: vertical-rl;
+}
+
+.idol-tile.is-selected {
+  border-width: 2px !important;
+  font-weight: bold;
+}
+
+.idol-tile-normal {
+  font-size: 6vh;
+  line-height: 7vh;
+}
+
+.idol-tile-small {
+  font-size: 5vh;
+  line-height: 5vh;
+}
+
+.idol-tile-Princess {
+  background-color: pink;
+}
+
+.idol-tile-Fairy {
+  background-color: lightblue;
+}
+
+.idol-tile-Angel {
+  background-color: lemonchiffon;
+}
+
+.idol-tile-Extra {
+  background-color: lightgreen;
+}
+
+.idol-tile-Sora {
+  background-color: violet;
+}
+
+.tile-list {
+  border-spacing: 1vh;
+}
+
+.idol-list {
+  border-spacing: 2vh;
+}
+
+.unit-list {
+  border-collapse: collapse;
+}
+
+.unit-list th {
+  background-color: lightgray;
+  border-color: black;
+  border-style: solid;
+  border-width: 1px;
+  padding: 1vh;
+}
+
+.unit-list td {
+  border-color: black;
+  border-style: solid;
+  border-width: 1px;
+  padding: 1vh;
+}
+
+.my-idol {
+  background-color: white;
+  font-size: 5vh;
+  padding: 1vh 2vh 1vh 2vh;
+}
+
+.my-idol-Princess {
+  background-color: pink;
+}
+
+.my-idol-Fairy {
+  background-color: lightblue;
+}
+
+.my-idol-Angel {
+  background-color: lemonchiffon;
+}
+
+.tile {
+  padding-left: 0;
+  padding-right: 0;
+}
+
+.trash-title {
+  display: block;
+  font-size: 7vh;
+  font-weight: bold;
+}
+
+.unit-title {
+  display: block;
+  font-size: 7vh;
+  font-weight: bold;
+}
+
+.ron-list {
+  display: block;
+  font-size: 7vh;
+  font-weight: bold;
+}
+
+.agari-info {
+  display: block;
+  font-size: 5vh;
+  font-weight: bold;
+}
+
+.unit-tile-chi {
+  color: red;
+  font-weight: bold;
+}
+
+.idol-tile-hidden {
+  display: none;
+}
+
+.kana-keyboard {
+  border-spacing: 2vh;
+}
+
+.kana-key {
+  background-color: white;
+  border-color: black;
+  border-style: solid;
+  border-width: 2px;
+  display: inline-block;
+  font-size: 7vh;
+  font-weight: bold;
+  height: 12vh;
+  line-height: 12vh;
+  text-align: center;
+  width: 12vh;
+}
