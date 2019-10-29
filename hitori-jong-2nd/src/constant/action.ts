@@ -3,6 +3,7 @@ export type ActionType =
   | 'TitleToSimulation'
   | 'BackToTitle'
   | 'BackToGame'
+  | 'BackToSimulation'
   | 'BackToView'
   | 'resetGame'
   | 'ToKanaKeyBoard'

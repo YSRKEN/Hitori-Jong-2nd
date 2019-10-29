@@ -7,6 +7,7 @@ import SimulationScene from 'scene/Simulation';
 import TrashScene from 'scene/Trash';
 import KanaKeyBoard from 'scene/KanaKeyBoard';
 import IdolSelector from 'scene/IdolSelector';
+import UnitDataScene from 'scene/UnitData';
 
 const SceneSelector: React.FC = () => {
   const { applicationMode } = useContext(ApplicationContext);
@@ -24,6 +25,8 @@ const SceneSelector: React.FC = () => {
       return <KanaKeyBoard />;
     case 'IdolSelector':
       return <IdolSelector />;
+    case 'UnitData':
+      return <UnitDataScene />;
     default:
       return <></>;
   }

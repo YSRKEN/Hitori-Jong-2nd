@@ -122,6 +122,13 @@ const useStore = (): ApplicationState => {
   // このフラグが立った際はツモを確認する
   const [tsumoCheckFlg, setTsumoCheckFlg] = useState(false);
 
+  // ユニット分析結果
+  const [unitData, setUnitData] = useState<{
+    unit0: number[];
+    unit1: number[];
+    unit2: number[];
+  }>({ unit0: [], unit1: [], unit2: [] });
+
   // 「現在の手牌」を返す
   const getMyHand = () => {
     return applicationMode === 'Game' ? myHandG : myHandS;
@@ -343,8 +350,11 @@ const useStore = (): ApplicationState => {
         break;
       // ゲーム画面に戻る
       case 'BackToGame':
-        setMyHandG2({ unit: [...myHandS.unit], member: [...myHandS.member] });
         setApplicationMode2('Game');
+        break;
+      // シミュレーション画面に戻る
+      case 'BackToSimulation':
+        setApplicationMode2('Simulation');
         break;
       // 元の画面に戻る
       case 'BackToView':
@@ -507,12 +517,8 @@ const useStore = (): ApplicationState => {
       }
       case 'judgeUnit': {
         const result = calcUnitData(myHandS);
-        console.log('揃っているユニット：');
-        console.log(result.unit0.map(id => UNIT_LIST2[id].name));
-        console.log('後1枚のユニット：');
-        console.log(result.unit1.map(id => UNIT_LIST2[id].name));
-        console.log('後2枚のユニット：');
-        console.log(result.unit2.map(id => UNIT_LIST2[id].name));
+        setUnitData(result);
+        setApplicationMode('UnitData');
         break;
       }
       default:
@@ -528,6 +534,7 @@ const useStore = (): ApplicationState => {
     selectedMemberFlg,
     selectedKana,
     myIdol,
+    unitData,
     dispatch,
   };
 };

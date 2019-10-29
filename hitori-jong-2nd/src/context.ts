@@ -10,6 +10,7 @@ export interface ApplicationState {
   selectedMemberFlg: boolean[];
   selectedKana: string;
   myIdol: number;
+  unitData: { unit0: number[]; unit1: number[]; unit2: number[] };
   dispatch: (action: Action) => void;
 }
 

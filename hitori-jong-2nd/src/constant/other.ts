@@ -11,7 +11,8 @@ export type ApplicationMode =
   | 'Simulation'
   | 'Trash'
   | 'KanaKeyBoard'
-  | 'IdolSelector';
+  | 'IdolSelector'
+  | 'UnitData';
 
 export const KANA_LIST =
   'あいうえおかきくけこさしすせそたちつてとなにぬねのはひふへほまみむめもや　ゆ　よらりるれろわ　を　ん';
