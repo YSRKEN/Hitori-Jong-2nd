@@ -24,9 +24,9 @@
 
 .tile-count {
   background-color: white;
+  border-color: blue;
   color: blue;
   font-size: 5vh;
-  border-color: blue;
   padding: 1vh 2vh 1vh 2vh;
 }
 
@@ -152,10 +152,29 @@
   border-spacing: 2vh;
 }
 
+.unit-list {
+  border-collapse: collapse;
+}
+
+.unit-list th {
+  background-color: lightgray;
+  border-color: black;
+  border-style: solid;
+  border-width: 1px;
+  padding: 1vh;
+}
+
+.unit-list td {
+  border-color: black;
+  border-style: solid;
+  border-width: 1px;
+  padding: 1vh;
+}
+
 .my-idol {
+  background-color: white;
   font-size: 5vh;
   padding: 1vh 2vh 1vh 2vh;
-  background-color: white;
 }
 
 .my-idol-Princess {
@@ -181,6 +200,12 @@
   font-weight: bold;
 }
 
+.unit-title {
+  display: block;
+  font-size: 7vh;
+  font-weight: bold;
+}
+
 .unit-tile-chi {
   color: red;
   font-weight: bold;
@@ -195,15 +220,15 @@
 }
 
 .kana-key {
-  display: inline-block;
-  width: 12vh;
-  height: 12vh;
-  border-width: 2px;
+  background-color: white;
   border-color: black;
   border-style: solid;
-  background-color: white;
+  border-width: 2px;
+  display: inline-block;
   font-size: 7vh;
   font-weight: bold;
-  text-align: center;
+  height: 12vh;
   line-height: 12vh;
+  text-align: center;
+  width: 12vh;
 }
