@@ -55,6 +55,11 @@
 
 .top-menu-share {
   background-color: #00aced;
+  display: inline-block;
+  border-color: black;
+  border-width: 1px;
+  border-style: solid;
+  white-space: nowrap;
 }
 
 .unit-tile {

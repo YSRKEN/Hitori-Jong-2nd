@@ -7,6 +7,7 @@ import {
   APPLICATION_VERSION,
 } from 'constant/other';
 import { ApplicationContext } from 'context';
+import { TwitterShareButton } from 'react-share';
 
 // タイトル画面
 const TitleSceneBase: React.FC<{
@@ -48,9 +49,11 @@ const TitleSceneBase: React.FC<{
       >
         シミュレーション
       </button>
-      <button type="button" className="default-button top-menu top-menu-share">
-        Twitterにシェア
-      </button>
+      <span className="default-button top-menu top-menu-share">
+      <TwitterShareButton url="https://hitori-jong.firebaseapp.com" title="一人用ミリジャン練習アプリ「ヒトリジャン rev.2」" hashtags={['ミリジャン', 'ヒトリジャン']}>
+          Twitterにシェア
+      </TwitterShareButton>
+      </span>
     </div>
   </>
 );
