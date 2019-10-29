@@ -408,6 +408,15 @@ const calcScoreAndUnitWithMyIdol = (
   return maxScore;
 };
 
+// 担当が含まれるユニット一覧
+const calcMyIdolUnitSet = (myIdol: number) => {
+  return new Set(
+    UNIT_LIST2.filter(unit => unit.member.includes(myIdol)).map(
+      unit => unit.id,
+    ),
+  );
+};
+
 // その牌でツモ/ロンした場合のスコアとユニット一覧を返す
 // (アガリ形の場合、スコア＝score % 1000000となる)
 export const calcScoreAndUnitForHand = (
@@ -416,11 +425,7 @@ export const calcScoreAndUnitForHand = (
   myIdol: number,
 ): ScoreResult => {
   // 担当が含まれるユニット一覧を取得する
-  const myIdolUnitSet = new Set(
-    UNIT_LIST2.filter(unit => unit.member.includes(myIdol)).map(
-      unit => unit.id,
-    ),
-  );
+  const myIdolUnitSet = calcMyIdolUnitSet(myIdol);
 
   // 既存のユニットに担当が含まれるかを調べる
   let myIdolFlg = false;
@@ -453,7 +458,7 @@ export const calcScoreAndUnitForHand = (
   };
 };
 
-// ユニットについての情報を取得する
+// ユニット分析
 export const calcUnitData = (
   hand: Hand,
 ): { unit0: number[]; unit1: number[]; unit2: number[] } => {
@@ -492,4 +497,80 @@ export const calcUnitData = (
   );
 
   return { unit0, unit1, unit2 };
+};
+
+// 受け入れ分析
+export const calcWantedIdol = (
+  hand: Hand,
+  myIdol: number,
+): {
+  agari: {
+    idol: number;
+    result: ScoreResult;
+  }[];
+  chi: {
+    idol: number;
+    unit: number;
+  }[];
+} => {
+  // 他の牌を加えた際、アガリ形になるものを検索する
+  const agariList: {
+    idol: number;
+    result: ScoreResult;
+  }[] = [];
+  IDOL_LIST2.forEach(idolInfo => {
+    if (agariList.filter(record => record.idol === idolInfo.id).length > 0) {
+      return;
+    }
+    const result = calcScoreAndUnitForHand(hand, idolInfo.id, myIdol);
+    if (result.score >= MILLION_SCORE) {
+      agariList.push({
+        idol: idolInfo.id,
+        result: {
+          myIdolFlg: result.myIdolFlg,
+          score: result.score % MILLION_SCORE,
+          unit: [...result.unit],
+        },
+      });
+    }
+  });
+
+  // チーできるものを検索する
+  const memberSet = new Set(hand.member.filter(id => id >= 0));
+
+  const chiList0: { idol: number; unit: number }[] = [];
+  UNIT_LIST2_WITHOUT_CHI.forEach(unitInfo => {
+    if (unitInfo.member.length <= 2) {
+      return;
+    }
+    const wantedMember = unitInfo.member.filter(id => !memberSet.has(id));
+    if (wantedMember.length === 0) {
+      for (const member of unitInfo.member) {
+        chiList0.push({ idol: member, unit: unitInfo.id });
+      }
+    }
+  });
+  const chiList1: { idol: number; unit: number }[] = [];
+  UNIT_LIST2_WITHOUT_CHI.forEach(unitInfo => {
+    if (unitInfo.member.length <= 2) {
+      return;
+    }
+    const wantedMember = unitInfo.member.filter(id => !memberSet.has(id));
+    if (wantedMember.length === 1) {
+      chiList1.push({ idol: wantedMember[0], unit: unitInfo.id });
+    }
+  });
+  chiList0.sort(
+    (a, b) =>
+      UNIT_LIST2[b.unit].member.length - UNIT_LIST2[a.unit].member.length,
+  );
+  chiList1.sort(
+    (a, b) =>
+      UNIT_LIST2[b.unit].member.length - UNIT_LIST2[a.unit].member.length,
+  );
+
+  return {
+    agari: agariList,
+    chi: [...chiList1, ...chiList0],
+  };
 };

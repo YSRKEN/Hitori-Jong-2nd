@@ -24,7 +24,8 @@ export type ActionType =
   | 'selectKana'
   | 'selectIdol'
   | 'judgeUnit'
-  | 'changeUnitDataFilterFlg';
+  | 'changeUnitDataFilterFlg'
+  | 'judgeWantedIdol';
 
 export interface Action {
   type: ActionType;

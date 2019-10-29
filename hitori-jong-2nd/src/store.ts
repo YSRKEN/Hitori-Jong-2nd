@@ -33,6 +33,7 @@ import {
   calcChiUnitList,
   calcScoreAndUnitForHand,
   calcUnitData,
+  calcWantedIdol,
 } from 'service/hand';
 import {
   resetTrashArea,
@@ -518,15 +519,23 @@ const useStore = (): ApplicationState => {
         }
         break;
       }
+      // ユニット分析
       case 'judgeUnit': {
         const result = calcUnitData(myHandS);
         setUnitData(result);
         setApplicationMode('UnitData');
         break;
       }
+      // ユニット分析結果の表示切替え
       case 'changeUnitDataFilterFlg':
         setUnitDataFilterFlg(pre => !pre);
         break;
+      // 受け入れ分析
+      case 'judgeWantedIdol': {
+        const result = calcWantedIdol(myHandS, myIdol);
+        console.log(result);
+        break;
+      }
       default:
         break;
     }

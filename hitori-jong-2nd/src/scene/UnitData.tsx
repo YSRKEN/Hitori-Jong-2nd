@@ -103,25 +103,32 @@ const UnitDataSceneBase: React.FC<{
         シミュレーション画面に戻る
       </button>
       <input
+        id="unitDataFilterFlg"
         type="checkbox"
         checked={unitDataFilterFlg}
         onChange={changeUnitDataFilterFlg}
       />
-      3人以上のユニットに絞る
+      <label htmlFor="unitDataFilterFlg">3人以上のユニットに絞る</label>
     </div>
     <div className="l-main-unitdata">
-      <span className="unit-title">完成したユニット：</span>
+      <span className="unit-title">
+        完成したユニット({unitData.unit0.length}組)：
+      </span>
       <UnitView0
         unitList={unitData.unit0}
         unitDataFilterFlg={unitDataFilterFlg}
       />
-      <span className="unit-title">あと1枚で完成するユニット：</span>
+      <span className="unit-title">
+        あと1枚で完成するユニット({unitData.unit1.length}組)：
+      </span>
       <UnitViewX
         freeMember={freeMember}
         unitList={unitData.unit1}
         unitDataFilterFlg={unitDataFilterFlg}
       />
-      <span className="unit-title">あと2枚で完成するユニット：</span>
+      <span className="unit-title">
+        あと2枚で完成するユニット({unitData.unit2.length}組)：
+      </span>
       <UnitViewX
         freeMember={freeMember}
         unitList={unitData.unit2}

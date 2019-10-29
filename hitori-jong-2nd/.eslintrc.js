@@ -129,6 +129,7 @@ module.exports = {
         'no-alert': 'off',
         '@typescript-eslint/no-explicit-any': 'off',
         'react/no-array-index-key': 'off',
+        'jsx-a11y/label-has-associated-control': 'off',
 
         // import
         'import/extensions': [

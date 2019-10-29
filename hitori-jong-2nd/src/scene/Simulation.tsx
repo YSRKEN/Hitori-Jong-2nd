@@ -17,6 +17,7 @@ const SimulationSceneBase: React.FC<{
   injectUnit: () => void;
   ejectUnit: () => void;
   judgeUnit: () => void;
+  judgeWantedIdol: () => void;
 }> = ({
   selectedUnitCount,
   selectedMemberCount,
@@ -29,6 +30,7 @@ const SimulationSceneBase: React.FC<{
   injectUnit,
   ejectUnit,
   judgeUnit,
+  judgeWantedIdol,
 }) => (
   <>
     <div className="l-header">
@@ -73,7 +75,7 @@ const SimulationSceneBase: React.FC<{
         onClick={ejectUnit}
       />
       <CommandButton text="ユニット？" showFlg onClick={judgeUnit} />
-      <CommandButton text="受け入れ？" showFlg />
+      <CommandButton text="受け入れ？" showFlg onClick={judgeWantedIdol} />
       <CommandButton text="何切る？" showFlg />
       <CommandButton text="ゲーム画面に遷移" showFlg onClick={backToGame} />
     </div>
@@ -107,6 +109,7 @@ const SimulationScene: React.FC = () => {
       injectUnit={() => dispatch({ type: 'injectUnit', message: '' })}
       ejectUnit={() => dispatch({ type: 'ejectUnit', message: '' })}
       judgeUnit={() => dispatch({ type: 'judgeUnit', message: '' })}
+      judgeWantedIdol={() => dispatch({ type: 'judgeWantedIdol', message: '' })}
     />
   );
 };
