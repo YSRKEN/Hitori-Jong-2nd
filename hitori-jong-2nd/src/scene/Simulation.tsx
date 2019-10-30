@@ -19,6 +19,7 @@ const SimulationSceneBase: React.FC<{
   showUnitInfo: () => void;
   judgeUnit: () => void;
   judgeWantedIdol: () => void;
+  suggestAction: () => void;
 }> = ({
   selectedUnitCount,
   selectedMemberCount,
@@ -33,6 +34,7 @@ const SimulationSceneBase: React.FC<{
   showUnitInfo,
   judgeUnit,
   judgeWantedIdol,
+  suggestAction
 }) => (
       <>
         <div className="l-header">
@@ -83,7 +85,7 @@ const SimulationSceneBase: React.FC<{
           />
           <CommandButton text="ユニット？" showFlg onClick={judgeUnit} />
           <CommandButton text="受け入れ？" showFlg onClick={judgeWantedIdol} />
-          <CommandButton text="何切る？" showFlg={false} />
+          <CommandButton text="何切る？" showFlg onClick={suggestAction} />
           <CommandButton text="ゲーム画面に遷移" showFlg onClick={backToGame} />
         </div>
         <div className="l-footer">
@@ -118,6 +120,7 @@ const SimulationScene: React.FC = () => {
       showUnitInfo={() => dispatch({ type: 'showUnitInfo', message: '' })}
       judgeUnit={() => dispatch({ type: 'judgeUnit', message: '' })}
       judgeWantedIdol={() => dispatch({ type: 'judgeWantedIdol', message: '' })}
+      suggestAction={() => dispatch({ type: 'suggestAction', message: '' })}
     />
   );
 };
