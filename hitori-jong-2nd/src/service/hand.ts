@@ -9,8 +9,6 @@ import {
   ZERO_SCORE,
 } from '../constant/other';
 import { sum, calcArrayDiff, scoreResultToString } from './utility';
-import { UNIT_LIST } from 'constant/unit';
-import { IDOL_LIST } from 'constant/idol';
 
 // 数字の配列(12枚)を手牌としてあてがう
 export const createHandFromArray = (handArray: number[]): Hand => {
@@ -659,7 +657,7 @@ export const suggestAction = (hand: Hand, myIdol: number) => {
     window.alert(`まだアガリ形ではありません(${nowScore.score % MILLION_SCORE}点)\n${scoreResultToString(nowScore)}`);
   }
 
-  // 手牌を切った際のシャンテン数を計算する
+  // 手牌を切った際のシャンテン数・ロン牌数・チー牌数を計算する
   const temp = new Set<number>();
   const calcResult: {trash: string, shanten: number, ron: number, chi: number}[] = [];
   for (let mi = 0; mi < hand.member.length; mi += 1) {
@@ -675,6 +673,8 @@ export const suggestAction = (hand: Hand, myIdol: number) => {
     calcResult.push({trash: IDOL_LIST2[trashMember].name, shanten: (result.shanten - 1), ron: ronCount, chi: chiCount});
     temp.add(trashMember);
   }
+
+  // 計算結果を清書
   calcResult.sort((a, b) => {
     if (a.ron !== b.ron) {
       return b.ron - a.ron;
@@ -687,10 +687,23 @@ export const suggestAction = (hand: Hand, myIdol: number) => {
     }
     return 0;
   });
+  const calcResult2: {[key: string]: string[]} = {};
+  for (const record of calcResult){
+    const key = `${record.shanten},${record.ron},${record.chi}`;
+    if (!(key in calcResult2)) {
+      calcResult2[key] = [];
+    }
+    calcResult2[key].push(record.trash);
+  }
+  
 
   let output = '打牌計算：\n';
-  for (const record of calcResult) {
-    output += `打牌：${record.trash}　シャンテン数：${record.shanten}　ロン牌数：${record.ron}　チー牌数：${record.chi}\n`;
+  for (const key in calcResult2) {
+    const temp = key.split(',');
+    const shanten = parseInt(temp[0], 10);
+    const ron = parseInt(temp[1], 10);
+    const chi = parseInt(temp[2], 10);
+    output += `打牌：${calcResult2[key]}\n　シャンテン数：${shanten}　ロン牌数：${ron}　チー牌数：${chi}\n`;
   }
   window.alert(output);
 };
