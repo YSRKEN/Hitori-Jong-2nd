@@ -672,19 +672,7 @@ export const suggestAction = (hand: Hand, myIdol: number) => {
     }
     const newHand = trashTile(hand, mi);
     const result = calcShanten(newHand);
-    let output = `打牌：${IDOL_LIST2[trashMember].name}\n`;
-    output += `${handToString(newHand)}\n`;
-    output += `シャンテン数：${result.shanten}\n`;
-    const temp2 = result.unit.map(unitId => {
-      const unitInfo = UNIT_LIST3[unitId];
-      if (unitInfo.wantedIdolCount === 0) {
-        return '・' + UNIT_LIST[unitInfo.unitId].name;
-      } else {
-        return '・' + UNIT_LIST[unitInfo.unitId].name + `(${unitInfo.wantedIdolCount}枚不足)`;
-      }
-    });
-    output += `追加ユニット例：\n${temp2.join('\n')}`;
-    console.log(output);
+    console.log(`打牌：${IDOL_LIST2[trashMember].name}　シャンテン数：${result.shanten - 1}`);
     temp.add(trashMember);
   }
 };
