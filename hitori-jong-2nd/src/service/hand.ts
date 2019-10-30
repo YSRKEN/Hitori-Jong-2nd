@@ -650,21 +650,18 @@ export const calcShanten = (hand: Hand): { shanten: number, unit: number[] } => 
 
 // 「何切る？」ボタンを押した際の処理
 export const suggestAction = (hand: Hand, myIdol: number) => {
-  window.alert('計算を開始します。');
-
-  console.log(`担当：${IDOL_LIST2[myIdol].name}`);
-  console.log(handToString(hand));
-
   // 素の状態でアガリ形かを調べる
   const nowScore = calcScoreAndUnitForHand(hand, hand.member[hand.member.length - 1], myIdol);
   if (nowScore.score >= MILLION_SCORE) {
-    console.log(`アガリ形か？：はい(${nowScore.score % MILLION_SCORE}点)\n${scoreResultToString(nowScore)}`);
+    window.alert(`既にアガリ形です(${nowScore.score % MILLION_SCORE}点)\n${scoreResultToString(nowScore)}`);
+    return;
   } else {
-    console.log(`アガリ形か？：いいえ(${nowScore.score % MILLION_SCORE}点)\n${scoreResultToString(nowScore)}`);
+    window.alert(`まだアガリ形ではありません(${nowScore.score % MILLION_SCORE}点)\n${scoreResultToString(nowScore)}`);
   }
 
   // 手牌を切った際のシャンテン数を計算する
   const temp = new Set<number>();
+  const calcResult: {trash: string, shanten: number, ron: number, chi: number}[] = [];
   for (let mi = 0; mi < hand.member.length; mi += 1) {
     const trashMember = hand.member[mi];
     if (temp.has(trashMember)) {
@@ -672,7 +669,28 @@ export const suggestAction = (hand: Hand, myIdol: number) => {
     }
     const newHand = trashTile(hand, mi);
     const result = calcShanten(newHand);
-    console.log(`打牌：${IDOL_LIST2[trashMember].name}　シャンテン数：${result.shanten - 1}`);
+    const result2 = calcWantedIdol(newHand, myIdol);
+    const ronCount = new Set(result2.agari.map(record => record.idol)).size;
+    const chiCount = new Set(result2.chi.map(record => record.idol)).size;
+    calcResult.push({trash: IDOL_LIST2[trashMember].name, shanten: (result.shanten - 1), ron: ronCount, chi: chiCount});
     temp.add(trashMember);
   }
+  calcResult.sort((a, b) => {
+    if (a.ron !== b.ron) {
+      return b.ron - a.ron;
+    }
+    if (a.chi !== b.chi) {
+      return b.chi - a.chi;
+    }
+    if (a.shanten !== b.shanten) {
+      return a.shanten - b.shanten;
+    }
+    return 0;
+  });
+
+  let output = '打牌計算：\n';
+  for (const record of calcResult) {
+    output += `打牌：${record.trash}　シャンテン数：${record.shanten}　ロン牌数：${record.ron}　チー牌数：${record.chi}\n`;
+  }
+  window.alert(output);
 };
