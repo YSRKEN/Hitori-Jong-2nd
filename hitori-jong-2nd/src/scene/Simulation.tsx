@@ -16,6 +16,7 @@ const SimulationSceneBase: React.FC<{
   shiftRight: () => void;
   injectUnit: () => void;
   ejectUnit: () => void;
+  showUnitInfo: () => void;
   judgeUnit: () => void;
   judgeWantedIdol: () => void;
 }> = ({
@@ -29,61 +30,67 @@ const SimulationSceneBase: React.FC<{
   shiftRight,
   injectUnit,
   ejectUnit,
+  showUnitInfo,
   judgeUnit,
   judgeWantedIdol,
 }) => (
-  <>
-    <div className="l-header">
-      <button
-        type="button"
-        className="l-margin-right default-button back-title"
-        onClick={backToTitle}
-      >
-        タイトルに戻る
+      <>
+        <div className="l-header">
+          <button
+            type="button"
+            className="l-margin-right default-button back-title"
+            onClick={backToTitle}
+          >
+            タイトルに戻る
       </button>
-      <MyIdolView />
-    </div>
-    <div className="l-main-simulation">
-      <CommandButton
-        text="変更"
-        showFlg={selectedUnitCount === 0 && selectedMemberCount === 1}
-        onClick={changeTile}
-      />
-      <CommandButton
-        text="交換"
-        showFlg={selectedUnitCount === 0 && selectedMemberCount === 2}
-        onClick={swapTile}
-      />
-      <CommandButton
-        text="左シフト"
-        showFlg={selectedUnitCount === 0 && selectedMemberCount >= 1}
-        onClick={shiftLeft}
-      />
-      <CommandButton
-        text="右シフト"
-        showFlg={selectedUnitCount === 0 && selectedMemberCount >= 1}
-        onClick={shiftRight}
-      />
-      <CommandButton
-        text="固定：ユニット"
-        showFlg={selectedUnitCount === 0 && selectedMemberCount >= 1}
-        onClick={injectUnit}
-      />
-      <CommandButton
-        text="解除：ユニット"
-        showFlg={selectedUnitCount > 0 && selectedMemberCount === 0}
-        onClick={ejectUnit}
-      />
-      <CommandButton text="ユニット？" showFlg onClick={judgeUnit} />
-      <CommandButton text="受け入れ？" showFlg onClick={judgeWantedIdol} />
-      <CommandButton text="何切る？" showFlg />
-      <CommandButton text="ゲーム画面に遷移" showFlg onClick={backToGame} />
-    </div>
-    <div className="l-footer">
-      <MyHandTileList />
-    </div>
-  </>
-);
+          <MyIdolView />
+        </div>
+        <div className="l-main-simulation">
+          <CommandButton
+            text="変更"
+            showFlg={selectedUnitCount === 0 && selectedMemberCount === 1}
+            onClick={changeTile}
+          />
+          <CommandButton
+            text="交換"
+            showFlg={selectedUnitCount === 0 && selectedMemberCount === 2}
+            onClick={swapTile}
+          />
+          <CommandButton
+            text="左シフト"
+            showFlg={selectedUnitCount === 0 && selectedMemberCount >= 1}
+            onClick={shiftLeft}
+          />
+          <CommandButton
+            text="右シフト"
+            showFlg={selectedUnitCount === 0 && selectedMemberCount >= 1}
+            onClick={shiftRight}
+          />
+          <CommandButton
+            text="固定：ユニット"
+            showFlg={selectedUnitCount === 0 && selectedMemberCount >= 1}
+            onClick={injectUnit}
+          />
+          <CommandButton
+            text="解除：ユニット"
+            showFlg={selectedUnitCount > 0 && selectedMemberCount === 0}
+            onClick={ejectUnit}
+          />
+          <CommandButton
+            text="ユニット詳細"
+            showFlg={selectedUnitCount > 0 && selectedMemberCount === 0}
+            onClick={showUnitInfo}
+          />
+          <CommandButton text="ユニット？" showFlg onClick={judgeUnit} />
+          <CommandButton text="受け入れ？" showFlg onClick={judgeWantedIdol} />
+          <CommandButton text="何切る？" showFlg={false} />
+          <CommandButton text="ゲーム画面に遷移" showFlg onClick={backToGame} />
+        </div>
+        <div className="l-footer">
+          <MyHandTileList />
+        </div>
+      </>
+    );
 
 const SimulationScene: React.FC = () => {
   const { selectedUnitFlg, selectedMemberFlg, dispatch } = useContext(
@@ -108,6 +115,7 @@ const SimulationScene: React.FC = () => {
       shiftRight={() => dispatch({ type: 'shiftRight', message: '' })}
       injectUnit={() => dispatch({ type: 'injectUnit', message: '' })}
       ejectUnit={() => dispatch({ type: 'ejectUnit', message: '' })}
+      showUnitInfo={() => dispatch({ type: 'showUnitInfo', message: '' })}
       judgeUnit={() => dispatch({ type: 'judgeUnit', message: '' })}
       judgeWantedIdol={() => dispatch({ type: 'judgeWantedIdol', message: '' })}
     />

@@ -23,6 +23,7 @@ const GameSceneBase: React.FC<{
   swapTile: () => void;
   injectUnit: () => void;
   ejectUnit: () => void;
+  showUnitInfo: () => void;
   showTrash: () => void;
   copyTile: () => void;
   useSora: () => void;
@@ -40,6 +41,7 @@ const GameSceneBase: React.FC<{
   swapTile,
   injectUnit,
   ejectUnit,
+  showUnitInfo,
   showTrash,
   copyTile,
   useSora,
@@ -116,6 +118,11 @@ const GameSceneBase: React.FC<{
         onClick={ejectUnit}
       />
       <CommandButton
+        text="ユニット詳細"
+        showFlg={!drawFlg && selectedUnitCount > 0 && selectedMemberCount === 0}
+        onClick={showUnitInfo}
+      />
+      <CommandButton
         text="確認：控え室"
         showFlg={!drawFlg}
         onClick={showTrash}
@@ -154,6 +161,7 @@ const GameScene: React.FC = () => {
       swapTile={() => dispatch({ type: 'swapTile', message: '' })}
       injectUnit={() => dispatch({ type: 'injectUnit', message: '' })}
       ejectUnit={() => dispatch({ type: 'ejectUnit', message: '' })}
+      showUnitInfo={() => dispatch({ type: 'showUnitInfo', message: '' })}
       showTrash={() => dispatch({ type: 'showTrash', message: '' })}
       copyTile={() => dispatch({ type: 'copyTile', message: '' })}
       useSora={() => dispatch({ type: 'useSora', message: '' })}

@@ -550,6 +550,25 @@ const useStore = (): ApplicationState => {
         setApplicationMode('WantedIdol');
         break;
       }
+      // 選択されたユニットについての情報を表示
+      case 'showUnitInfo': {
+        const myHand = getMyHand();
+        if (selectedUnitFlg.includes(true)) {
+          let output = 'ユニット情報：\n';
+          selectedUnitFlg.forEach((flg, index) => {
+            if (flg) {
+              const unit = UNIT_LIST2[myHand.unit[index]];
+              output += `・${unit.name}`;
+              output += unit.chiFlg ? '(チー)' : '';
+              output += '\n';
+              output += `　点数：${unit.score}点\n`;
+              output += `　メンバー：${unit.member.map(id => IDOL_LIST2[id].name)}\n`;
+            }
+          });
+          window.alert(output);
+        }
+        break;
+      }
       default:
         break;
     }

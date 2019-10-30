@@ -25,7 +25,8 @@ export type ActionType =
   | 'selectIdol'
   | 'judgeUnit'
   | 'changeUnitDataFilterFlg'
-  | 'judgeWantedIdol';
+  | 'judgeWantedIdol'
+  | 'showUnitInfo';
 
 export interface Action {
   type: ActionType;
