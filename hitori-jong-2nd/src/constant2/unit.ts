@@ -78,32 +78,30 @@ const createUnitInfo3 = () => {
 
   // ユニット一覧
   const output: UnitInfo3[] = [];
-  let id = 0;
   UNIT_LIST.forEach((unitInfo, index) => {
+    const unitId = index;
     const member = unitInfo.member.map(idolName => nameToId[idolName]);
     const idolCount = member.length;
 
     // 足りている場合のパターン
     output.push({
-      id,
-      unitId: index,
+      id: 0,
+      unitId,
       includingMember: [...member],
       idolCount,
       wantedIdolCount: 0
     });
-    id += 1;
 
     // 1枚足りない場合のパターン
     for (let mi = 0; mi < member.length; mi += 1) {
       const member2 = member.filter((_, index) => index !== mi);
       output.push({
-        id,
-        unitId: index,
+        id: 0,
+        unitId,
         includingMember: [...member2],
         idolCount,
         wantedIdolCount: 1
       });
-      id += 1;
     }
 
     // 2枚足りない場合のパターン
@@ -112,13 +110,12 @@ const createUnitInfo3 = () => {
         for (let mi2 = mi1 + 1; mi2 < member.length; mi2 += 1) {
           const member3 = member.filter((_, index) => index !== mi1 && index !== mi2);
           output.push({
-            id,
-            unitId: index,
+            id: 0,
+            unitId,
             includingMember: [...member3],
             idolCount,
             wantedIdolCount: 2
           });
-          id += 1;
         }
       }
     }
@@ -130,8 +127,17 @@ const createUnitInfo3 = () => {
     return temp1 * 100 + temp2;
   });
 
-  return output;
+  return output.map((record, index) => {
+    return {
+      id: index,
+      unitId: record.unitId,
+      includingMember: [...record.includingMember],
+      idolCount: record.idolCount,
+      wantedIdolCount: record.wantedIdolCount
+    }
+  });
 };
 
 export const UNIT_LIST3 = createUnitInfo3();
 export const UNIT_LIST3_SIIKA = UNIT_LIST3.findIndex(unit => UNIT_LIST[unit.unitId].name === '(詩花)' && unit.wantedIdolCount === 1);
+console.log(UNIT_LIST3);
