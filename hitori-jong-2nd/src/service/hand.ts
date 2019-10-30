@@ -111,13 +111,16 @@ export const swapTile = (hand: Hand, selectedMemberFlg: boolean[]): Hand => {
 };
 
 // ユニットを結成
-export const injectUnit = (hand: Hand, selectedMemberFlg: boolean[]): Hand => {
+export const injectUnit = (hand: Hand, selectedMemberFlg: boolean[], chiFlg: boolean): Hand => {
   // 選択された手牌を取り出す
   const member = hand.member.filter((_, index) => selectedMemberFlg[index]);
 
   // 選択された手牌について、当てはまるユニットがあるかを調べる
   const memberSet = new Set(member);
   const unit = UNIT_LIST2.filter(unitInfo => {
+    if (unitInfo.chiFlg !== chiFlg) {
+      return false;
+    }
     if (unitInfo.member.length !== member.length) {
       return false;
     }

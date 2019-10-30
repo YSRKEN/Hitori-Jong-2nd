@@ -459,7 +459,7 @@ const useStore = (): ApplicationState => {
       // 選択した手牌でユニットを結成する
       case 'injectUnit': {
         const myHand = getMyHand();
-        setMyHand(injectUnit(myHand, selectedMemberFlg));
+        setMyHand(injectUnit(myHand, selectedMemberFlg, action.message === 'true'));
         resetSelectedTileFlg();
         break;
       }

@@ -15,6 +15,7 @@ const SimulationSceneBase: React.FC<{
   shiftLeft: () => void;
   shiftRight: () => void;
   injectUnit: () => void;
+  injectUnitChi: () => void;
   ejectUnit: () => void;
   showUnitInfo: () => void;
   judgeUnit: () => void;
@@ -30,6 +31,7 @@ const SimulationSceneBase: React.FC<{
   shiftLeft,
   shiftRight,
   injectUnit,
+  injectUnitChi,
   ejectUnit,
   showUnitInfo,
   judgeUnit,
@@ -74,6 +76,11 @@ const SimulationSceneBase: React.FC<{
             onClick={injectUnit}
           />
           <CommandButton
+            text="固定：チー"
+            showFlg={selectedUnitCount === 0 && selectedMemberCount >= 1}
+            onClick={injectUnitChi}
+          />
+          <CommandButton
             text="解除：ユニット"
             showFlg={selectedUnitCount > 0 && selectedMemberCount === 0}
             onClick={ejectUnit}
@@ -115,7 +122,8 @@ const SimulationScene: React.FC = () => {
       swapTile={() => dispatch({ type: 'swapTile', message: '' })}
       shiftLeft={() => dispatch({ type: 'shiftLeft', message: '' })}
       shiftRight={() => dispatch({ type: 'shiftRight', message: '' })}
-      injectUnit={() => dispatch({ type: 'injectUnit', message: '' })}
+      injectUnit={() => dispatch({ type: 'injectUnit', message: 'false' })}
+      injectUnitChi={() => dispatch({ type: 'injectUnit', message: 'true' })}
       ejectUnit={() => dispatch({ type: 'ejectUnit', message: '' })}
       showUnitInfo={() => dispatch({ type: 'showUnitInfo', message: '' })}
       judgeUnit={() => dispatch({ type: 'judgeUnit', message: '' })}

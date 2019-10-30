@@ -159,7 +159,7 @@ const GameScene: React.FC = () => {
       shiftLeft={() => dispatch({ type: 'shiftLeft', message: '' })}
       shiftRight={() => dispatch({ type: 'shiftRight', message: '' })}
       swapTile={() => dispatch({ type: 'swapTile', message: '' })}
-      injectUnit={() => dispatch({ type: 'injectUnit', message: '' })}
+      injectUnit={() => dispatch({ type: 'injectUnit', message: 'false' })}
       ejectUnit={() => dispatch({ type: 'ejectUnit', message: '' })}
       showUnitInfo={() => dispatch({ type: 'showUnitInfo', message: '' })}
       showTrash={() => dispatch({ type: 'showTrash', message: '' })}
