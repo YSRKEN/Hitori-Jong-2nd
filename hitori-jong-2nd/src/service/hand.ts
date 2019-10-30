@@ -574,3 +574,9 @@ export const calcWantedIdol = (
     chi: [...chiList1, ...chiList0],
   };
 };
+
+// 「何切る？」ボタンを押した際の処理
+export const suggestAction = (hand: Hand, myIdol: number) => {
+  console.log(`担当：${IDOL_LIST2[myIdol].name}`);
+  console.log(handToString(hand));
+};

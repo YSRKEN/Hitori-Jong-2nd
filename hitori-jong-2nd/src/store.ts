@@ -35,6 +35,7 @@ import {
   calcScoreAndUnitForHand,
   calcUnitData,
   calcWantedIdol,
+  suggestAction,
 } from 'service/hand';
 import {
   resetTrashArea,
@@ -567,6 +568,11 @@ const useStore = (): ApplicationState => {
           });
           window.alert(output);
         }
+        break;
+      }
+      // 何切る？Buttonの処理
+      case 'suggestAction': {
+        suggestAction(myHandS, myIdol);
         break;
       }
       default:
