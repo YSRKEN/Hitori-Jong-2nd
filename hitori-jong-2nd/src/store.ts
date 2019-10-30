@@ -349,7 +349,7 @@ const useStore = (): ApplicationState => {
       }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [applicationMode, tsumoCheckFlg]);
+  }, [myHandG, applicationMode, tsumoCheckFlg]);
 
   // dispatch
   const dispatch = (action: Action) => {
