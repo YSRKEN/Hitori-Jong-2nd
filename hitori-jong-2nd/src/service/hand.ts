@@ -1,5 +1,5 @@
 import { SORA_ID, IDOL_LIST2 } from 'constant2/idol';
-import { UNIT_LIST2, UNIT_LIST2_WITHOUT_CHI } from 'constant2/unit';
+import { UNIT_LIST2, UNIT_LIST2_WITHOUT_CHI, UNIT_LIST3 } from 'constant2/unit';
 import {
   Hand,
   HAND_TILE_COUNT,
@@ -575,14 +575,84 @@ export const calcWantedIdol = (
   };
 };
 
+const cache: { [key: string]: number } = {};
+
+// シャンテン数を計算する
+// テンパイ形なら0、1シャンテンなら1……となる
+const calcShantenImpl = (freeMember: number[], depth: number, maxDepth: number, unitList = UNIT_LIST3): number => {
+  // キャッシュにデータが存在する場合の処理
+  const key = freeMember.map(id => id.toString()).join(',');
+  if (key in cache) {
+    return cache[key];
+  }
+
+  // 階層が深くなりすぎる場合の処理
+  if (depth >= maxDepth) {
+    return Math.min(freeMember.length - 1, 1);
+  }
+
+  // 与えられたユニットから適合する一覧を検索する
+  const freeMemberSet = new Set(freeMember);
+  const filteredUnitList = unitList.filter(unitInfo => {
+    if (freeMember.length < unitInfo.idolCount) {
+      return false;
+    }
+    for (const member of unitInfo.includingMember) {
+      if (!freeMemberSet.has(member)) {
+        return false;
+      }
+    }
+    return true;
+  });
+
+  // どれとも符合しない場合は大幅なペナルティを与える
+  if (filteredUnitList.length === 0 && freeMember.length > 0) {
+    return 10000;
+  }
+
+  // バックトラック式にシャンテン数を計算する
+  let minShanten = HAND_TILE_COUNT_PLUS;
+  for (const unitInfo of filteredUnitList) {
+    // 当該ユニットを取り去った後の手牌を算出する
+    const freeMember2 = calcArrayDiff(freeMember, unitInfo.includingMember);
+
+    // 使い切った場合
+    if (freeMember2.length === 0) {
+      cache[key] = unitInfo.wantedIdolCount;
+      return unitInfo.wantedIdolCount;
+    }
+
+    // 使い切れない場合
+    const shanten = unitInfo.wantedIdolCount + calcShantenImpl(freeMember2, depth + 1, maxDepth, filteredUnitList);
+    if (minShanten > shanten) {
+      minShanten = shanten;
+    }
+  }
+  if (minShanten < 10000) {
+    cache[key] = minShanten;
+  }
+  return minShanten;
+}
+
 // シャンテン数を計算する
 // テンパイ形なら0、1シャンテンなら1……となる
 export const calcShanten = (hand: Hand): number => {
-  return 0; // 仮置き
+  // フリーな手牌を抽出する
+  const freeMember = hand.member.filter(id => id >= 0);
+
+  // 手牌を使い切る組み合わせの中で、最も「残り枚数の合計値」が小さいものを検索する
+  // 例：7枚あり、完成したユニットが3人組・2人組、1枚足りないユニットが3人組で
+  // 　構成できた場合、「残り枚数の合計値」は1となる。
+  // 　また、1枚足りないユニットが3人組、2枚足りないユニットが5人組で
+  // 　構成できた場合、「残り枚数の合計値」は3となる。
+  // 　ゆえに、不足分がより小さい前者のパターンを採用する
+  return calcShantenImpl(freeMember, 0, 3); // 仮置き
 };
 
 // 「何切る？」ボタンを押した際の処理
 export const suggestAction = (hand: Hand, myIdol: number) => {
+  window.alert('計算を開始します。');
+
   console.log(`担当：${IDOL_LIST2[myIdol].name}`);
   console.log(handToString(hand));
 
