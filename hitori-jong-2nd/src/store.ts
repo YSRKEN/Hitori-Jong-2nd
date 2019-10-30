@@ -570,7 +570,7 @@ const useStore = (): ApplicationState => {
         }
         break;
       }
-      // 何切る？Buttonの処理
+      // 何切る？ボタンの処理
       case 'suggestAction': {
         suggestAction(myHandS, myIdol);
         break;

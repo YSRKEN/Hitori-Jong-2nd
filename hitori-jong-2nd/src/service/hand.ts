@@ -635,7 +635,7 @@ const calcShantenImpl = (freeMember: number[], freespace = freeMember.length, un
 }
 
 // シャンテン数を計算する
-// テンパイ形なら0、1シャンテンなら1……となる
+// アガリ形なら0、テンパイなら1、1シャンテンなら2……となる
 export const calcShanten = (hand: Hand): { shanten: number, unit: number[] } => {
   // フリーな手牌を抽出する
   const freeMember = [...hand.member];
@@ -649,9 +649,28 @@ export const calcShanten = (hand: Hand): { shanten: number, unit: number[] } => 
   return calcShantenImpl(freeMember); // 仮置き
 };
 
+// シャンテン数を計算する
+export const calcShanten13 = (hand: Hand): { shanten: number, unit: number[] } => {
+  const temp = new Set<number>();
+  const resultList: { shanten: number, unit: number[] }[] = [];
+  for (let mi = 0; mi < hand.member.length; mi += 1) {
+    const trashMember = hand.member[mi];
+    if (temp.has(trashMember)) {
+      continue;
+    }
+    const newHand = trashTile(hand, mi);
+    const result = calcShanten(newHand);
+    resultList.push(result);
+    temp.add(trashMember);
+  }
+  resultList.sort((a, b) => a.shanten - b.shanten);
+  return resultList[0];
+}
+
 // 「何切る？」ボタンを押した際の処理
 export const suggestAction = (hand: Hand, myIdol: number) => {
   // 素の状態でアガリ形かを調べる
+  window.alert('アガリ形かの評価開始');
   const nowScore = calcScoreAndUnitForHand(hand, hand.member[hand.member.length - 1], myIdol);
   if (nowScore.score >= MILLION_SCORE) {
     window.alert(`既にアガリ形です(${nowScore.score % MILLION_SCORE}点)\n${scoreResultToString(nowScore)}`);
@@ -660,25 +679,31 @@ export const suggestAction = (hand: Hand, myIdol: number) => {
     window.alert(`まだアガリ形ではありません(${nowScore.score % MILLION_SCORE}点)\n${scoreResultToString(nowScore)}`);
   }
 
-  // 手牌を切った際のシャンテン数・ロン牌数・チー牌数を計算する
+  // 素の状態の最高シャンテン数を計算する
+  window.alert('何を切るべきかの評価開始');
+  const rawResult = calcShanten13(hand);
+
+  // 打牌後のシャンテン数・ロン牌数・チー牌数を計算する
   const temp = new Set<number>();
-  const calcResult: {trash: string, shanten: number, ron: number, chi: number}[] = [];
+  const trashResult: {trash: string, shanten: number, ron: number, chi: number}[] = [];
   for (let mi = 0; mi < hand.member.length; mi += 1) {
     const trashMember = hand.member[mi];
     if (temp.has(trashMember)) {
       continue;
     }
+    temp.add(trashMember);
+
     const newHand = trashTile(hand, mi);
     const result = calcShanten(newHand);
-    const result2 = calcWantedIdol(newHand, myIdol);
-    const ronCount = new Set(result2.agari.map(record => record.idol)).size;
-    const chiCount = new Set(result2.chi.map(record => record.idol)).size;
-    calcResult.push({trash: IDOL_LIST2[trashMember].name, shanten: (result.shanten - 1), ron: ronCount, chi: chiCount});
-    temp.add(trashMember);
+    if (result.shanten <= rawResult.shanten) {
+      const result2 = calcWantedIdol(newHand, myIdol);
+      const ronCount = new Set(result2.agari.map(record => record.idol)).size;
+      const chiCount = new Set(result2.chi.map(record => record.idol)).size;
+      trashResult.push({trash: IDOL_LIST2[trashMember].name, shanten: (result.shanten - 1), ron: ronCount, chi: chiCount});
+    }
   }
-
-  // 計算結果を清書
-  calcResult.sort((a, b) => {
+  // 打牌後のシャンテン数・ロン牌数・チー牌数の結果をソート
+  trashResult.sort((a, b) => {
     if (a.ron !== b.ron) {
       return b.ron - a.ron;
     }
@@ -690,23 +715,56 @@ export const suggestAction = (hand: Hand, myIdol: number) => {
     }
     return 0;
   });
-  const calcResult2: {[key: string]: string[]} = {};
-  for (const record of calcResult){
+  // 打牌後のシャンテン数・ロン牌数・チー牌数の結果を出力
+  const trashResult2: {[key: string]: string[]} = {};
+  for (const record of trashResult){
     const key = `${record.shanten},${record.ron},${record.chi}`;
-    if (!(key in calcResult2)) {
-      calcResult2[key] = [];
+    if (!(key in trashResult2)) {
+      trashResult2[key] = [];
     }
-    calcResult2[key].push(record.trash);
+    trashResult2[key].push(record.trash);
   }
-  
-
-  let output = '打牌計算：\n';
-  for (const key in calcResult2) {
+  let output = `現在のシャンテン数：${rawResult.shanten}\n`;
+  for (const key in trashResult2) {
     const temp = key.split(',');
     const shanten = parseInt(temp[0], 10);
     const ron = parseInt(temp[1], 10);
     const chi = parseInt(temp[2], 10);
-    output += `打牌：${calcResult2[key]}\n　シャンテン数：${shanten}　ロン牌数：${ron}　チー牌数：${chi}\n`;
+    output += `　打牌：${trashResult2[key]}\n　　シャンテン数：${shanten}　ロン牌数：${ron}　チー牌数：${chi}\n`;
   }
   window.alert(output);
+
+  // チーした際のシャンテン数を調査
+  window.alert('チーするべきかの評価開始');
+  const trashResult3: {[key: string]: string[]} = {};
+  for (const record of trashResult){
+    // record.trashを打牌するとした場合、それはフリーの手牌の中で何番目に当たるか
+    const mi = hand.member.map(id => IDOL_LIST2[id].name).indexOf(record.trash);
+    // record.trashを打牌した後の手牌
+    const newHand = trashTile(hand, mi);
+    // newHandがロンまたはチーで必要とする牌一覧
+    const result2 = calcWantedIdol(newHand, myIdol);
+    for (const record2 of result2.chi) {
+      // チーで引き込んだ後の手牌
+      const newHand2 = chiTile(newHand, record2.idol, record2.unit);
+      // newHand2のシャンテン数
+      const chiedResult = calcShanten13(newHand2);
+      if (chiedResult.shanten < rawResult.shanten) {
+        const key = IDOL_LIST2[record2.idol].name + '|' + chiedResult.shanten.toString() + '|' + UNIT_LIST2[record2.unit].name;
+        if (!(key in trashResult3)) {
+          trashResult3[key] = []; 
+        }
+        trashResult3[key].push(record.trash);
+      }
+    }
+  }
+  let output2 = '打牌ごとのチーすべき組み合わせ：\n';
+  for (const key in trashResult3) {
+    const temp = key.split('|');
+    const chi = temp[0];
+    const shanten = parseInt(temp[1], 10);
+    const unit = temp[2];
+    output2 += `　打牌：${trashResult3[key]}\n　　チー：${chi}　シャンテン数：${shanten}\n　　ユニット：${unit}\n`;
+  }
+  window.alert(output2);
 };
