@@ -8,7 +8,7 @@ import {
   ScoreResult,
   ZERO_SCORE,
 } from '../constant/other';
-import { sum, calcArrayDiff } from './utility';
+import { sum, calcArrayDiff, scoreResultToString } from './utility';
 
 // 数字の配列(12枚)を手牌としてあてがう
 export const createHandFromArray = (handArray: number[]): Hand => {
@@ -575,8 +575,34 @@ export const calcWantedIdol = (
   };
 };
 
+// シャンテン数を計算する
+// テンパイ形なら0、1シャンテンなら1……となる
+export const calcShanten = (hand: Hand): number => {
+  return 0; // 仮置き
+};
+
 // 「何切る？」ボタンを押した際の処理
 export const suggestAction = (hand: Hand, myIdol: number) => {
   console.log(`担当：${IDOL_LIST2[myIdol].name}`);
   console.log(handToString(hand));
+
+  // 素の状態でアガリ形かを調べる
+  const nowScore = calcScoreAndUnitForHand(hand, hand.member[hand.member.length - 1], myIdol);
+  if (nowScore.score >= MILLION_SCORE) {
+    console.log(`アガリ形か？：はい(${nowScore.score % MILLION_SCORE}点)\n${scoreResultToString(nowScore)}`);
+  } else {
+    console.log(`アガリ形か？：いいえ(${nowScore.score % MILLION_SCORE}点)\n${scoreResultToString(nowScore)}`);
+  }
+
+  // 手牌を切った際のシャンテン数を計算する
+  const temp = new Set<number>();
+  for (let mi = 0; mi < hand.member.length; mi += 1) {
+    const trashMember = hand.member[mi];
+    if (temp.has(trashMember)) {
+      continue;
+    }
+    const newHand = trashTile(hand, mi);
+    console.log(`打牌：${IDOL_LIST2[trashMember].name}\n${handToString(newHand)}\nシャンテン数：${calcShanten(newHand)}`);
+    temp.add(trashMember);
+  }
 };
