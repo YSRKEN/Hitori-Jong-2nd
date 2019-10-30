@@ -1,5 +1,5 @@
 import { SORA_ID, IDOL_LIST2 } from 'constant2/idol';
-import { UNIT_LIST2, UNIT_LIST2_WITHOUT_CHI, UNIT_LIST3 } from 'constant2/unit';
+import { UNIT_LIST2, UNIT_LIST2_WITHOUT_CHI, UNIT_LIST3, UNIT_LIST3_SIIKA } from 'constant2/unit';
 import {
   Hand,
   HAND_TILE_COUNT,
@@ -9,6 +9,7 @@ import {
   ZERO_SCORE,
 } from '../constant/other';
 import { sum, calcArrayDiff, scoreResultToString } from './utility';
+import { UNIT_LIST } from 'constant/unit';
 
 // 数字の配列(12枚)を手牌としてあてがう
 export const createHandFromArray = (handArray: number[]): Hand => {
@@ -575,11 +576,11 @@ export const calcWantedIdol = (
   };
 };
 
-const cache: { [key: string]: number } = {};
+const cache: { [key: string]: {shanten: number, unit: number[]} } = {};
 
 // シャンテン数を計算する
 // テンパイ形なら0、1シャンテンなら1……となる
-const calcShantenImpl = (freeMember: number[], depth: number, maxDepth: number, unitList = UNIT_LIST3): number => {
+const calcShantenImpl = (freeMember: number[], depth: number, maxDepth: number, unitList = UNIT_LIST3): {shanten: number, unit: number[]} => {
   // キャッシュにデータが存在する場合の処理
   const key = freeMember.map(id => id.toString()).join(',');
   if (key in cache) {
@@ -588,7 +589,9 @@ const calcShantenImpl = (freeMember: number[], depth: number, maxDepth: number, 
 
   // 階層が深くなりすぎる場合の処理
   if (depth >= maxDepth) {
-    return Math.min(freeMember.length - 1, 1);
+    const temp = Array<number>(freeMember.length);
+    temp.fill(UNIT_LIST3_SIIKA);
+    return {shanten: freeMember.length, unit: temp};
   }
 
   // 与えられたユニットから適合する一覧を検索する
@@ -607,36 +610,39 @@ const calcShantenImpl = (freeMember: number[], depth: number, maxDepth: number, 
 
   // どれとも符合しない場合は大幅なペナルティを与える
   if (filteredUnitList.length === 0 && freeMember.length > 0) {
-    return 10000;
+    return {shanten: 10000, unit: [-1]};
   }
 
   // バックトラック式にシャンテン数を計算する
   let minShanten = HAND_TILE_COUNT_PLUS;
+  let minUnit = [-1];
   for (const unitInfo of filteredUnitList) {
     // 当該ユニットを取り去った後の手牌を算出する
     const freeMember2 = calcArrayDiff(freeMember, unitInfo.includingMember);
 
     // 使い切った場合
     if (freeMember2.length === 0) {
-      cache[key] = unitInfo.wantedIdolCount;
-      return unitInfo.wantedIdolCount;
+      cache[key] = {shanten: unitInfo.wantedIdolCount, unit: [unitInfo.id]};
+      return {shanten: unitInfo.wantedIdolCount, unit: [unitInfo.id]};
     }
 
     // 使い切れない場合
-    const shanten = unitInfo.wantedIdolCount + calcShantenImpl(freeMember2, depth + 1, maxDepth, filteredUnitList);
+    const result = calcShantenImpl(freeMember2, depth + 1, maxDepth, filteredUnitList);
+    const shanten = unitInfo.wantedIdolCount + result.shanten;
     if (minShanten > shanten) {
       minShanten = shanten;
+      minUnit = [...result.unit, unitInfo.id];
     }
   }
   if (minShanten < 10000) {
-    cache[key] = minShanten;
+    cache[key] = {shanten: minShanten, unit: minUnit};
   }
-  return minShanten;
+  return {shanten: minShanten, unit: minUnit};
 }
 
 // シャンテン数を計算する
 // テンパイ形なら0、1シャンテンなら1……となる
-export const calcShanten = (hand: Hand): number => {
+export const calcShanten = (hand: Hand): {shanten: number, unit: number[]} => {
   // フリーな手牌を抽出する
   const freeMember = hand.member.filter(id => id >= 0);
 
@@ -646,7 +652,7 @@ export const calcShanten = (hand: Hand): number => {
   // 　また、1枚足りないユニットが3人組、2枚足りないユニットが5人組で
   // 　構成できた場合、「残り枚数の合計値」は3となる。
   // 　ゆえに、不足分がより小さい前者のパターンを採用する
-  return calcShantenImpl(freeMember, 0, 3); // 仮置き
+  return calcShantenImpl(freeMember, 0, 5); // 仮置き
 };
 
 // 「何切る？」ボタンを押した際の処理
@@ -672,7 +678,20 @@ export const suggestAction = (hand: Hand, myIdol: number) => {
       continue;
     }
     const newHand = trashTile(hand, mi);
-    console.log(`打牌：${IDOL_LIST2[trashMember].name}\n${handToString(newHand)}\nシャンテン数：${calcShanten(newHand)}`);
+    const result = calcShanten(newHand);
+    let output = `打牌：${IDOL_LIST2[trashMember].name}\n`;
+    output += `${handToString(newHand)}\n`;
+    output += `シャンテン数：${result.shanten}\n`;
+    const temp2 = result.unit.map(unitId => {
+      const unitInfo = UNIT_LIST3[unitId];
+      if (unitInfo.wantedIdolCount === 0) {
+        return '・' + UNIT_LIST[unitInfo.unitId].name;
+      } else {
+        return '・' + UNIT_LIST[unitInfo.unitId].name + `(${unitInfo.wantedIdolCount}枚不足)`;
+      }
+    });
+    output += `ユニット例：\n${temp2.join('\n')}`;
+    console.log(output);
     temp.add(trashMember);
   }
 };

@@ -62,6 +62,7 @@ export const UNIT_LIST2_WITHOUT_CHI = UNIT_LIST2.filter(
 // シャンテン数分析用の情報
 export interface UnitInfo3 {
   id: number;
+  unitId: number;
   includingMember: number[];
   idolCount: number;
   wantedIdolCount: number;
@@ -78,13 +79,14 @@ const createUnitInfo3 = () => {
   // ユニット一覧
   const output: UnitInfo3[] = [];
   let id = 0;
-  UNIT_LIST.forEach(unitInfo => {
+  UNIT_LIST.forEach((unitInfo, index) => {
     const member = unitInfo.member.map(idolName => nameToId[idolName]);
     const idolCount = member.length;
 
     // 足りている場合のパターン
     output.push({
       id,
+      unitId: index,
       includingMember: [...member],
       idolCount,
       wantedIdolCount: 0
@@ -96,6 +98,7 @@ const createUnitInfo3 = () => {
       const member2 = member.filter((_, index) => index !== mi);
       output.push({
         id,
+        unitId: index,
         includingMember: [...member2],
         idolCount,
         wantedIdolCount: 1
@@ -110,6 +113,7 @@ const createUnitInfo3 = () => {
           const member3 = member.filter((_, index) => index !== mi1 && index !== mi2);
           output.push({
             id,
+            unitId: index,
             includingMember: [...member3],
             idolCount,
             wantedIdolCount: 2
@@ -130,4 +134,4 @@ const createUnitInfo3 = () => {
 };
 
 export const UNIT_LIST3 = createUnitInfo3();
-console.log(UNIT_LIST3);
+export const UNIT_LIST3_SIIKA = UNIT_LIST3.findIndex(unit => UNIT_LIST[unit.unitId].name === '(詩花)' && unit.wantedIdolCount === 1);
