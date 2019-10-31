@@ -31,7 +31,7 @@ const TitleSceneBase: React.FC<{
         <span className="application-title">{APPLICATION_NAME}</span>
       </div>
       <div className="l-text-center">
-        <span className="application-version">{APPLICATION_VERSION}</span>
+        <span className="application-version">Ver.{APPLICATION_VERSION}</span>
       </div>
     </div>
     <div className="l-footer l-text-center">
