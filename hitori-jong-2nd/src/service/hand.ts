@@ -1,5 +1,5 @@
 import { SORA_ID, IDOL_LIST2 } from 'constant2/idol';
-import { UNIT_LIST2, UNIT_LIST2_WITHOUT_CHI } from 'constant2/unit';
+import { UNIT_LIST2, UNIT_LIST2_WITHOUT_CHI, UNIT_LIST3, UNIT_LIST3_SIIKA } from 'constant2/unit';
 import {
   Hand,
   HAND_TILE_COUNT,
@@ -8,7 +8,7 @@ import {
   ScoreResult,
   ZERO_SCORE,
 } from '../constant/other';
-import { sum, calcArrayDiff } from './utility';
+import { sum, calcArrayDiff, scoreResultToString } from './utility';
 
 // 数字の配列(12枚)を手牌としてあてがう
 export const createHandFromArray = (handArray: number[]): Hand => {
@@ -111,13 +111,16 @@ export const swapTile = (hand: Hand, selectedMemberFlg: boolean[]): Hand => {
 };
 
 // ユニットを結成
-export const injectUnit = (hand: Hand, selectedMemberFlg: boolean[]): Hand => {
+export const injectUnit = (hand: Hand, selectedMemberFlg: boolean[], chiFlg: boolean): Hand => {
   // 選択された手牌を取り出す
   const member = hand.member.filter((_, index) => selectedMemberFlg[index]);
 
   // 選択された手牌について、当てはまるユニットがあるかを調べる
   const memberSet = new Set(member);
   const unit = UNIT_LIST2.filter(unitInfo => {
+    if (unitInfo.chiFlg !== chiFlg) {
+      return false;
+    }
     if (unitInfo.member.length !== member.length) {
       return false;
     }
@@ -573,4 +576,195 @@ export const calcWantedIdol = (
     agari: agariList,
     chi: [...chiList1, ...chiList0],
   };
+};
+
+const cache: { [key: string]: { shanten: number, unit: number[] } } = {};
+
+// シャンテン数を計算する
+// アガリ形なら0、テンパイなら1、1シャンテンなら2……となる
+const calcShantenImpl = (freeMember: number[], freespace = freeMember.length, unitList = UNIT_LIST3): { shanten: number, unit: number[] } => {
+  // キャッシュにデータが存在する場合の処理
+  const key = freeMember.map(id => id.toString()).join(',') + `,${freespace}`;
+  if (key in cache) {
+    return cache[key];
+  }
+
+  // 与えられたユニットから適合する一覧を検索する
+  const freeMemberSet = new Set(freeMember);
+  const filteredUnitList = unitList.filter(unitInfo => {
+    if (freespace < unitInfo.includingMember.length) {
+      return false;
+    }
+    for (const member of unitInfo.includingMember) {
+      if (!freeMemberSet.has(member)) {
+        return false;
+      }
+    }
+    return true;
+  });
+
+  // そもそもピッタリの組み合わせがあればそれが最短となるはず
+  for (const unitInfo of filteredUnitList) {
+    if (freespace === unitInfo.idolCount) {
+      return { shanten: unitInfo.wantedIdolCount, unit: [unitInfo.id] };
+    }
+  }
+
+  // シャンテン数をバックトラックで計算する
+  let minShanten = freeMember.length;
+  const temp = new Array(freeMember.length);
+  temp.fill(UNIT_LIST3_SIIKA);
+  let minUnit = temp;
+  for (const unit of filteredUnitList) {
+    // 当該ユニットを取り去った後の手牌を算出する
+    const freeMember2 = calcArrayDiff(freeMember, unit.includingMember);
+
+    // 取り去った後の手牌について計算を実施
+    const result = calcShantenImpl(freeMember2, freespace - unit.idolCount, filteredUnitList);
+
+    // シャンテン数が小さい組み合わせを優先させる
+    const shanten = result.shanten + unit.wantedIdolCount;
+    if (minShanten > shanten) {
+      minShanten = shanten;
+      minUnit = [...result.unit, unit.id];
+    }
+  }
+
+  cache[key] = {shanten: minShanten, unit: minUnit};
+  return { shanten: minShanten, unit: minUnit };
+}
+
+// シャンテン数を計算する
+// アガリ形なら0、テンパイなら1、1シャンテンなら2……となる
+export const calcShanten = (hand: Hand): { shanten: number, unit: number[] } => {
+  // フリーな手牌を抽出する
+  const freeMember = [...hand.member];
+
+  // 手牌を使い切る組み合わせの中で、最も「残り枚数の合計値」が小さいものを検索する
+  // 例：7枚あり、完成したユニットが3人組・2人組、1枚足りないユニットが3人組で
+  // 　構成できた場合、「残り枚数の合計値」は1となる。
+  // 　また、1枚足りないユニットが3人組、2枚足りないユニットが5人組で
+  // 　構成できた場合、「残り枚数の合計値」は3となる。
+  // 　ゆえに、不足分がより小さい前者のパターンを採用する
+  return calcShantenImpl(freeMember); // 仮置き
+};
+
+// シャンテン数を計算する
+export const calcShanten13 = (hand: Hand): { shanten: number, unit: number[] } => {
+  const temp = new Set<number>();
+  const resultList: { shanten: number, unit: number[] }[] = [];
+  for (let mi = 0; mi < hand.member.length; mi += 1) {
+    const trashMember = hand.member[mi];
+    if (temp.has(trashMember)) {
+      continue;
+    }
+    const newHand = trashTile(hand, mi);
+    const result = calcShanten(newHand);
+    resultList.push(result);
+    temp.add(trashMember);
+  }
+  resultList.sort((a, b) => a.shanten - b.shanten);
+  return resultList[0];
+}
+
+// 「何切る？」ボタンを押した際の処理
+export const suggestAction = (hand: Hand, myIdol: number) => {
+  // 素の状態でアガリ形かを調べる
+  window.alert('アガリ形かの評価開始');
+  const nowScore = calcScoreAndUnitForHand(hand, hand.member[hand.member.length - 1], myIdol);
+  if (nowScore.score >= MILLION_SCORE) {
+    window.alert(`既にアガリ形です(${nowScore.score % MILLION_SCORE}点)\n${scoreResultToString(nowScore)}`);
+    return;
+  } else {
+    window.alert(`まだアガリ形ではありません(${nowScore.score % MILLION_SCORE}点)\n${scoreResultToString(nowScore)}`);
+  }
+
+  // 素の状態の最高シャンテン数を計算する
+  window.alert('何を切るべきかの評価開始');
+  const rawResult = calcShanten13(hand);
+
+  // 打牌後のシャンテン数・ロン牌数・チー牌数を計算する
+  const temp = new Set<number>();
+  const trashResult: {trash: string, shanten: number, ron: number, chi: number}[] = [];
+  for (let mi = 0; mi < hand.member.length; mi += 1) {
+    const trashMember = hand.member[mi];
+    if (temp.has(trashMember)) {
+      continue;
+    }
+    temp.add(trashMember);
+
+    const newHand = trashTile(hand, mi);
+    const result = calcShanten(newHand);
+    if (result.shanten <= rawResult.shanten) {
+      const result2 = calcWantedIdol(newHand, myIdol);
+      const ronCount = new Set(result2.agari.map(record => record.idol)).size;
+      const chiCount = new Set(result2.chi.map(record => record.idol)).size;
+      trashResult.push({trash: IDOL_LIST2[trashMember].name, shanten: (result.shanten - 1), ron: ronCount, chi: chiCount});
+    }
+  }
+  // 打牌後のシャンテン数・ロン牌数・チー牌数の結果をソート
+  trashResult.sort((a, b) => {
+    if (a.ron !== b.ron) {
+      return b.ron - a.ron;
+    }
+    if (a.chi !== b.chi) {
+      return b.chi - a.chi;
+    }
+    if (a.shanten !== b.shanten) {
+      return a.shanten - b.shanten;
+    }
+    return 0;
+  });
+  // 打牌後のシャンテン数・ロン牌数・チー牌数の結果を出力
+  const trashResult2: {[key: string]: string[]} = {};
+  for (const record of trashResult){
+    const key = `${record.shanten},${record.ron},${record.chi}`;
+    if (!(key in trashResult2)) {
+      trashResult2[key] = [];
+    }
+    trashResult2[key].push(record.trash);
+  }
+  let output = `現在のシャンテン数：${rawResult.shanten}\n`;
+  for (const key in trashResult2) {
+    const temp = key.split(',');
+    const shanten = parseInt(temp[0], 10);
+    const ron = parseInt(temp[1], 10);
+    const chi = parseInt(temp[2], 10);
+    output += `　打牌：${trashResult2[key]}\n　　シャンテン数：${shanten}　ロン牌数：${ron}　チー牌数：${chi}\n`;
+  }
+  window.alert(output);
+
+  // チーした際のシャンテン数を調査
+  window.alert('チーするべきかの評価開始');
+  const trashResult3: {[key: string]: string[]} = {};
+  for (const record of trashResult){
+    // record.trashを打牌するとした場合、それはフリーの手牌の中で何番目に当たるか
+    const mi = hand.member.map(id => IDOL_LIST2[id].name).indexOf(record.trash);
+    // record.trashを打牌した後の手牌
+    const newHand = trashTile(hand, mi);
+    // newHandがロンまたはチーで必要とする牌一覧
+    const result2 = calcWantedIdol(newHand, myIdol);
+    for (const record2 of result2.chi) {
+      // チーで引き込んだ後の手牌
+      const newHand2 = chiTile(newHand, record2.idol, record2.unit);
+      // newHand2のシャンテン数
+      const chiedResult = calcShanten13(newHand2);
+      if (chiedResult.shanten < rawResult.shanten) {
+        const key = IDOL_LIST2[record2.idol].name + '|' + chiedResult.shanten.toString() + '|' + UNIT_LIST2[record2.unit].name;
+        if (!(key in trashResult3)) {
+          trashResult3[key] = []; 
+        }
+        trashResult3[key].push(record.trash);
+      }
+    }
+  }
+  let output2 = '打牌ごとのチーすべき組み合わせ：\n';
+  for (const key in trashResult3) {
+    const temp = key.split('|');
+    const chi = temp[0];
+    const shanten = parseInt(temp[1], 10);
+    const unit = temp[2];
+    output2 += `　打牌：${trashResult3[key]}\n　　チー：${chi}　シャンテン数：${shanten}\n　　ユニット：${unit}\n`;
+  }
+  window.alert(output2);
 };
