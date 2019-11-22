@@ -1,5 +1,5 @@
 export const APPLICATION_NAME = 'ヒトリジャン';
-export const APPLICATION_VERSION = '2.0.0';
+export const APPLICATION_VERSION = '2.0.1';
 export const AUTHOR_URL = 'https://twitter.com/YSRKEN';
 export const PROJECT_URL = 'https://github.com/YSRKEN/Hitori-Jong-2nd';
 export const README_URL =

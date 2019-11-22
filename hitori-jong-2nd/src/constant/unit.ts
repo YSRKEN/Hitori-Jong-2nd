@@ -52,6 +52,7 @@ export const UNIT_LIST: UnitInfo[] = [
 	{ 'name': 'ブルウ・スタア', 'member': ['真', '響'] },
 	{ 'name': "始めのDon't worry", 'member': ['美希', '伊織'] },
 	{ 'name': 'LEMONADE', 'member': ['雪歩', 'あずさ'] },
+	{ 'name': 'Sherry\'n Cherry', 'member': ['このみ', '莉緒'] },
 	{ 'name': 'FleurS', 'member': ['百合子', '桃子', 'このみ'] },
 	{ 'name': 'マイティセーラーズ', 'member': ['百合子', '海美', '翼'] },
 	{ 'name': 'ミリオンシグナル', 'member': ['未来', '静香', '翼'] },
