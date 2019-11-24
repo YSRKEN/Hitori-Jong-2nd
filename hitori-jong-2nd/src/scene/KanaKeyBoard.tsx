@@ -2,6 +2,7 @@ import React, { useContext } from 'react';
 import { ApplicationContext } from 'context';
 import { KANA_LIST } from 'constant/other';
 import { IDOL_LIST2 } from 'constant2/idol';
+import { getFirstCharacter } from 'service/utility';
 
 interface KanaData {
 	kana: string;
@@ -60,7 +61,7 @@ const KanaKeyBoard: React.FC = () => {
 			const kana = KANA_LIST.substring(p, p + 1);
 
 			// 取り出したかなに対し、対応するアイドルがいるかを調べる
-			const disabled = IDOL_LIST2.filter(idolInfo => idolInfo.kana.substring(0, 1) === kana).length === 0;
+			const disabled = IDOL_LIST2.filter(idolInfo => getFirstCharacter(idolInfo.kana) === kana).length === 0;
 			temp.push({ kana, disabled });
 		}
 		kanaList.push(temp);
