@@ -108,7 +108,7 @@ const UnitDataSceneBase: React.FC<{
         checked={unitDataFilterFlg}
         onChange={changeUnitDataFilterFlg}
       />
-      <label htmlFor="unitDataFilterFlg">3人以上のユニットに絞る</label>
+      <label className="unitdata-filter-option" htmlFor="unitDataFilterFlg">3人以上のユニットに絞る</label>
     </div>
     <div className="l-main-unitdata">
       <span className="unit-title">
