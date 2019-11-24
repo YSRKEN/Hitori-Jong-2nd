@@ -117,3 +117,12 @@ export const scoreResultToString = (scoreResult: ScoreResult) => {
   })
   return output;
 }
+
+// アイドルの名前の頭文字を取り出す
+export const getFirstCharacter = (idolName: string) => {
+  const character = idolName.substring(0, 1);
+  if (character === 'じ') {
+    return 'し';
+  }
+  return character;
+};

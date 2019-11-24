@@ -2,6 +2,7 @@ import React, { useContext } from 'react';
 import { ApplicationContext } from 'context';
 import { IDOL_LIST2 } from 'constant2/idol';
 import IdolTile from 'parts/idolTile';
+import { getFirstCharacter } from 'service/utility';
 
 // アイドル選択用の一覧
 const IdolSelectorBase: React.FC<{
@@ -35,7 +36,7 @@ const IdolSelector: React.FC = () => {
 
 	const selectIdol = (id: number) => dispatch({type: 'selectIdol', message: `${id}`});
 
-	const idolList = IDOL_LIST2.filter(idol => idol.kana.substring(0, 1) === selectedKana).map(idol => idol.id);
+	const idolList = IDOL_LIST2.filter(idol => getFirstCharacter(idol.kana) === selectedKana).map(idol => idol.id);
 	if (idolList.length === 1) {
 		selectIdol(idolList[0]);
 	}
